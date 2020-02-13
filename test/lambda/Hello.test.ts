@@ -1,4 +1,4 @@
-import { handler } from '../../src/lambda/hello'
+import { handler } from '../../src/lambda/Hello'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 
 test('hello', async () => {

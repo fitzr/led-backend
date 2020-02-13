@@ -13,8 +13,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint . --ext .ts --ignore-pattern '**/*.d.ts'",
+    "lint:fix": "eslint . --ext .ts --ignore-pattern '**/*.d.ts' --fix",
     "cdk": "cdk"
   },
   "devDependencies": {

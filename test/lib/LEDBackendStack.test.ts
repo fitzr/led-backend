@@ -1,6 +1,6 @@
 // import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert'
-import * as cdk from '@aws-cdk/core'
-import LEDBackendStack from '../../src/lib/LEDBackendStack'
+// import * as cdk from '@aws-cdk/core'
+// import LEDBackendStack from '../../src/lib/LEDBackendStack'
 
 test('LEDBackendStack', () => {
   // TODO

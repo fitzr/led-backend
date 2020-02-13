@@ -9,7 +9,7 @@ export default class HelloService extends core.Construct {
 
     const handler = new lambda.Function(this, 'hello-lambda', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'hello.handler',
+      handler: 'Hello.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda'))
     })
 
