@@ -1,8 +1,6 @@
-# Welcome to your CDK TypeScript project!
+# led-backend
 
-This is a blank project for TypeScript development with CDK.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+A serverless backend for LED lighting devices.
 
 ## Useful commands
 
