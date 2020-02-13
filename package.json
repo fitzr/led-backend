@@ -4,6 +4,10 @@
   "bin": {
     "led-backend": "bin/led-backend.js"
   },
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
