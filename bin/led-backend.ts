@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from '@aws-cdk/core'
-import { LedBackendStack } from '../src/stack/led-backend-stack'
+import LEDBackendStack from '../src/lib/LEDBackendStack'
 
 const app = new cdk.App()
-new LedBackendStack(app, 'LedBackendStack')
+new LEDBackendStack(app, 'LEDBackendStack')

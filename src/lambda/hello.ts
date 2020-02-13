@@ -14,9 +14,6 @@ export const handler = async (
 
   return {
     statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
     body: JSON.stringify(result)
   }
 }
