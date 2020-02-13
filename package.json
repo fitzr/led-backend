@@ -1,6 +1,7 @@
 {
   "name": "led-backend",
   "version": "0.1.0",
+  "license": "UNLICENSED",
   "bin": {
     "led-backend": "bin/led-backend.js"
   },
@@ -12,12 +13,13 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "lint": "eslint . --ext .js,.ts",
-    "lint:fix": "eslint . --ext .js,.ts --fix",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "cdk": "cdk"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.23.0",
+    "@types/aws-lambda": "^8.10.40",
     "@types/jest": "^24.0.22",
     "@types/node": "10.17.5",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
@@ -33,6 +35,8 @@
     "typescript": "~3.7.2"
   },
   "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.23.0",
+    "@aws-cdk/aws-lambda": "^1.23.0",
     "@aws-cdk/core": "1.23.0",
     "source-map-support": "^0.5.16"
   }

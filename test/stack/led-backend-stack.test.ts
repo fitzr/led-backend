@@ -1,12 +1,10 @@
 import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert'
 import * as cdk from '@aws-cdk/core'
-import LedBackend = require('../lib/led-backend-stack')
+import LedBackend = require('../../src/stack/led-backend-stack')
 
 test('Empty Stack', () => {
   const app = new cdk.App()
-  // WHEN
   const stack = new LedBackend.LedBackendStack(app, 'MyTestStack')
-  // THEN
   expectCDK(stack).to(
     matchTemplate(
       {
