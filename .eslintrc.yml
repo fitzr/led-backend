@@ -13,4 +13,11 @@ parserOptions:
 #  ecmaVersion: 2018
 plugins:
   - '@typescript-eslint'
-rules: {}
+rules:
+  semi:
+    - 2
+    - never
+  prettier/prettier:
+    - error
+    - singleQuote: true
+      semi: false

@@ -12,6 +12,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "eslint . --ext .js,.ts --fix",
     "cdk": "cdk"
   },
   "devDependencies": {
