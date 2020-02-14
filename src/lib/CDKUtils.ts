@@ -1,7 +1,7 @@
-import { Construct } from '@aws-cdk/core'
+import * as cdk from '@aws-cdk/core'
 
 export default class CDKUtils {
-  public static getEnv(scope: Construct): string {
+  public static getEnv(scope: cdk.Construct): string {
     const env = scope.node.tryGetContext('env')
     if (!env) {
       throw new Error('Context "env" was not defined.')
@@ -9,7 +9,7 @@ export default class CDKUtils {
     return env
   }
 
-  public static makeId(scope: Construct, prefix: string): string {
+  public static makeId(scope: cdk.Construct, prefix: string): string {
     return `${prefix}-${CDKUtils.getEnv(scope)}`
   }
 }

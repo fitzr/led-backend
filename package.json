@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "UNLICENSED",
   "bin": {
-    "led-backend": "bin/led-backend.js"
+    "led-backend": "src/bin/led-backend.js"
   },
   "engines": {
     "node": "12.x",

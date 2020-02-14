@@ -1,3 +1,3 @@
 {
-  "app": "npx ts-node bin/led-backend.ts"
+  "app": "npx ts-node src/bin/led-backend.ts"
 }
