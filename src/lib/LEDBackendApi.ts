@@ -1,47 +1,57 @@
-import core = require('@aws-cdk/core')
-import apigateway = require('@aws-cdk/aws-apigateway')
-import lambda = require('@aws-cdk/aws-lambda')
-import path = require('path')
+import { Construct } from '@aws-cdk/core'
+import { Code, Runtime, Function } from '@aws-cdk/aws-lambda'
+import { RestApi, LambdaIntegration } from '@aws-cdk/aws-apigateway'
 import { Resource } from '@aws-cdk/aws-apigateway/lib/resource'
+import CDKUtils from './CDKUtils'
+import path = require('path')
 
-export default class LEDBackendApi extends core.Construct {
-  static API_VERSION = 'v1'
-
-  constructor(scope: core.Construct, id: string) {
+export default class LEDBackendApi extends Construct {
+  constructor(scope: Construct, id: string) {
     super(scope, id)
-    const root = this.createApiRoot()
-    this.addHelloApi(root)
-    this.addSendMessageApi(root)
+    const apiVersion = scope.node.tryGetContext('apiVersion') || 'v1'
+    const api = this.createApi(scope)
+    const resource = api.root.addResource(apiVersion)
+    this.addHelloApi(resource)
+    this.addSendMessageApi(resource)
   }
 
-  private createApiRoot(): Resource {
-    const api = new apigateway.RestApi(this, 'LEDBackendRestApi', {
-      restApiName: 'led-backend-api',
-      description: 'APIs for LED app.'
+  private createApi(scope: Construct): RestApi {
+    const env = CDKUtils.getEnv(scope)
+    const api = new RestApi(this, 'RestApi', {
+      restApiName: `led-backend-api-${env}`,
+      description: 'APIs for LED app.',
+      deployOptions: {
+        stageName: env
+      }
     })
-    api.addApiKey('LEDBackendRestApiKey')
-    return api.root.addResource(LEDBackendApi.API_VERSION)
+    const key = api.addApiKey('ApiKey')
+    const plan = api.addUsagePlan('UsagePlan', {
+      name: 'no-throttle',
+      apiKey: key
+    })
+    plan.addApiStage({ stage: api.deploymentStage })
+    return api
   }
 
   private addHelloApi(resource: Resource): void {
-    const func = new lambda.Function(this, 'HelloFunction', {
-      runtime: lambda.Runtime.NODEJS_12_X,
+    const func = new Function(this, 'HelloFunction', {
+      runtime: Runtime.NODEJS_12_X,
       handler: 'Hello.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../lambda'))
+      code: Code.fromAsset(path.join(__dirname, '../lambda'))
     })
-    const integration = new apigateway.LambdaIntegration(func, {})
+    const integration = new LambdaIntegration(func, {})
     resource.addResource('hello').addMethod('GET', integration, {
       apiKeyRequired: true
     })
   }
 
   private addSendMessageApi(resource: Resource): void {
-    const func = new lambda.Function(this, 'SendMessageFunction', {
-      runtime: lambda.Runtime.NODEJS_12_X,
+    const func = new Function(this, 'SendMessageFunction', {
+      runtime: Runtime.NODEJS_12_X,
       handler: 'SendMessage.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../lambda'))
+      code: Code.fromAsset(path.join(__dirname, '../lambda'))
     })
-    const integration = new apigateway.LambdaIntegration(func, {})
+    const integration = new LambdaIntegration(func, {})
     resource.addResource('send-message').addMethod('POST', integration, {
       apiKeyRequired: true
     })

@@ -15,7 +15,8 @@
     "test": "jest",
     "lint": "eslint . --ext .ts --ignore-pattern '**/*.d.ts'",
     "lint:fix": "eslint . --ext .ts --ignore-pattern '**/*.d.ts' --fix",
-    "cdk": "cdk"
+    "synth:dev": "tsc && cdk synth -c env=dev",
+    "deploy:dev": "tsc && cdk deploy -c env=dev"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.23.0",
