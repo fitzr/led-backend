@@ -1,17 +1,17 @@
 import * as cdk from '@aws-cdk/core'
-import CDKUtils from '../../src/lib/CDKUtils'
+import { CdkUtils } from '../../src/lib/cdk-utils'
 
-describe('CDKUtils', () => {
+describe('CdkUtils', () => {
   describe('getEnv', () => {
     test('can get env', () => {
       const app = new cdk.App({ context: { env: 'test' } })
-      const env = CDKUtils.getEnv(app)
+      const env = CdkUtils.getEnv(app)
       expect(env).toBe('test')
     })
 
     test('should throw error when env was not defined', () => {
       const app = new cdk.App()
-      const t = (): string => CDKUtils.getEnv(app)
+      const t = (): string => CdkUtils.getEnv(app)
       expect(t).toThrowError('Context "env" was not defined.')
     })
   })
@@ -19,7 +19,7 @@ describe('CDKUtils', () => {
   describe('makeId', () => {
     test('makes id with env', () => {
       const app = new cdk.App({ context: { env: 'test' } })
-      const id = CDKUtils.makeId(app, 'id-prefix')
+      const id = CdkUtils.makeId(app, 'id-prefix')
       expect(id).toBe('id-prefix-test')
     })
   })
