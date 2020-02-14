@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html"/>
+  <title>LED APP DEMO</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  <style type="text/css">
+    body {
+      background-color: #DADADA;
+      padding-top: 5%;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/x-template" id="template">
+  <div class="ui raised very padded text container segment">
+    <h2 class="ui header">LED APP DEMO</h2>
+    <div class="ui form">
+      <div class="field">
+        <label>API ROOT</label>
+        <input type="text" v-model="apiRoot">
+      </div>
+      <div class="field">
+        <label>API KEY</label>
+        <input type="text" v-model="apiKey">
+      </div>
+      <div class="ui hidden divider"></div>
+      <div class="ui grey inverted segment">
+        <div class="field">
+          <label>DEVICE ID</label>
+          <input type="text" v-model="deviceId">
+        </div>
+        <div class="ui hidden divider"></div>
+        <div class="field">
+          <label>MESSAGE</label>
+          <textarea v-model="message"/>
+        </div>
+        <button class="ui button" @click="sendMessage">Send Message</button>
+        <button class="ui button" @click="checkStatus">Check Status</button>
+        <div v-if="result">
+          <div class="ui hidden divider"></div>
+          <div v-if="result" class="ui message" :class="{ positive: result && !error , negative: result && error}">
+            {{result}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+<script>
+  new Vue({
+    el: '#app',
+    template: '#template',
+    data: {
+      apiRoot: null,
+      apiKey: null,
+      deviceId: null,
+      message: null,
+      result: null,
+      error: false,
+    },
+    methods: {
+      sendMessage() {
+        this.fetch(`${this.apiRoot}/send-message`, 'POST', this.message)
+      },
+      checkStatus() {
+        this.fetch(`${this.apiRoot}/hello`, 'GET')
+      },
+      async fetch(url, method, body) {
+        const res = await fetch(url, {
+          mode: 'cors',
+          method,
+          body,
+          headers: {
+            'x-api-key': this.apiKey
+          }
+        })
+        console.log(res)
+      }
+    }
+  })
+</script>
+</body>
+</html>
