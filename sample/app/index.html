@@ -15,7 +15,6 @@
 </head>
 <body>
 <div id="app"></div>
-<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script type="text/x-template" id="template">
   <div class="ui raised very padded text container segment">
@@ -66,21 +65,28 @@
     },
     methods: {
       sendMessage() {
-        this.fetch(`${this.apiRoot}/send-message`, 'POST', this.message)
+        this.fetch(`${this.apiRoot}/message`, 'POST', this.message)
       },
       checkStatus() {
-        this.fetch(`${this.apiRoot}/hello`, 'GET')
+        this.fetch(`${this.apiRoot}/status`, 'GET')
       },
       async fetch(url, method, body) {
-        const res = await fetch(url, {
-          mode: 'cors',
-          method,
-          body,
-          headers: {
-            'x-api-key': this.apiKey
-          }
-        })
-        console.log(res)
+        try {
+          const res = await fetch(url, {
+            mode: 'cors',
+            method,
+            body,
+            headers: {
+              'Content-type':'application/json',
+              'x-api-key': this.apiKey
+            }
+          })
+          this.result = await res.json()
+          this.error = false
+        } catch (e) {
+          this.result = e
+          this.error = true
+        }
       }
     }
   })

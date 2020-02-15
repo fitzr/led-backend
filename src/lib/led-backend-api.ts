@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core'
 import * as lambda from '@aws-cdk/aws-lambda'
-import * as apigateway from '@aws-cdk/aws-apigateway'
+import * as apigw from '@aws-cdk/aws-apigateway'
 import { CdkUtils } from './cdk-utils'
 
 export class LedBackendApi extends cdk.Construct {
@@ -11,23 +11,30 @@ export class LedBackendApi extends cdk.Construct {
     const env = CdkUtils.getEnv(scope)
     const api = this.createApi(env)
     const resource = api.root.addResource(LedBackendApi.API_VERSION)
-    this.addHelloMethod(resource, env)
-    // this.addSendMessageMethod(resource, env)
+    this.addGetStatusMethod(resource, env)
+    this.addSendMessageMethod(resource, env)
   }
 
-  private createApi(env: string): apigateway.RestApi {
-    const api = new apigateway.RestApi(this, 'RestApi', {
+  private createApi(env: string): apigw.RestApi {
+    let props: apigw.RestApiProps = {
       restApiName: `led-backend-api-${env}`,
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
-        allowMethods: apigateway.Cors.ALL_METHODS,
-        statusCode: 200
-      },
       description: 'APIs for LED app.',
       deployOptions: {
         stageName: env
       }
-    })
+    }
+    if (env === 'dev') {
+      // allow cors
+      props = {
+        ...props,
+        defaultCorsPreflightOptions: {
+          allowOrigins: apigw.Cors.ALL_ORIGINS,
+          allowMethods: apigw.Cors.ALL_METHODS,
+          statusCode: 200
+        }
+      }
+    }
+    const api = new apigw.RestApi(this, 'RestApi', props)
     const key = api.addApiKey('ApiKey')
     const plan = api.addUsagePlan('UsagePlan', {
       name: 'no-throttle',
@@ -37,93 +44,95 @@ export class LedBackendApi extends cdk.Construct {
     return api
   }
 
-  private addHelloMethod(resource: apigateway.Resource, env: string): void {
-    const func = new lambda.Function(this, 'HelloFunction', {
+  private addGetStatusMethod(resource: apigw.Resource, env: string): void {
+    const func = new lambda.Function(this, 'GetStatusFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'hello.handler',
+      handler: 'get-status.handler',
       code: lambda.Code.fromAsset('src/lambda')
     })
-    const integration = new apigateway.LambdaIntegration(func, {
+    resource
+      .addResource('status')
+      .addMethod(
+        'GET',
+        new apigw.LambdaIntegration(func, this.integrationOptions(env)),
+        this.methodOptions(env)
+      )
+  }
+
+  private addSendMessageMethod(resource: apigw.Resource, env: string): void {
+    const func = new lambda.Function(this, 'SendMessageFunction', {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      handler: 'send-message.handler',
+      code: lambda.Code.fromAsset('src/lambda')
+    })
+    resource
+      .addResource('message')
+      .addMethod(
+        'POST',
+        new apigw.LambdaIntegration(func, this.integrationOptions(env)),
+        this.methodOptions(env)
+      )
+  }
+
+  private integrationOptions(env: string): apigw.LambdaIntegrationOptions {
+    let options: apigw.LambdaIntegrationOptions = {
+      passthroughBehavior: apigw.PassthroughBehavior.NEVER,
+      proxy: false,
       integrationResponses: [
         {
-          statusCode: '200',
-          responseParameters: {
-            'method.response.header.Access-Control-Allow-Headers':
-              "'Content-Type,X-Api-Key'",
-            'method.response.header.Access-Control-Allow-Origin': "'*'",
-            'method.response.header.Access-Control-Allow-Methods':
-              "'OPTIONS,GET'"
-          }
+          statusCode: '200'
         }
       ],
-      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-      proxy: false,
       requestTemplates: {
         'application/json': '{"statusCode": 200}'
       }
-    })
-    resource.addResource('hello').addMethod('GET', integration, {
-      methodResponses: [
-        {
-          statusCode: '200',
-          responseParameters: {
-            'method.response.header.Access-Control-Allow-Headers': true,
-            'method.response.header.Access-Control-Allow-Origin': true,
-            'method.response.header.Access-Control-Allow-Methods': true
+    }
+    if (env === 'dev') {
+      // allow cors
+      options = {
+        ...options,
+        integrationResponses: [
+          {
+            statusCode: '200',
+            responseParameters: {
+              'method.response.header.Access-Control-Allow-Headers':
+                "'Content-Type,X-Api-Key'",
+              'method.response.header.Access-Control-Allow-Origin': "'*'",
+              'method.response.header.Access-Control-Allow-Methods':
+                "'OPTIONS,GET,POST'"
+            }
           }
-        }
-      ],
-      apiKeyRequired: true
-    })
+        ]
+      }
+    }
+    return options
   }
 
-  // private addSendMessageMethod(
-  //   resource: apigateway.Resource,
-  //   env: string
-  // ): void {
-  //   const func = new lambda.Function(this, 'SendMessageFunction', {
-  //     runtime: lambda.Runtime.NODEJS_12_X,
-  //     handler: 'send-message.handler',
-  //     code: lambda.Code.fromAsset('src/lambda')
-  //   })
-  //   const integration = new apigateway.LambdaIntegration(
-  //     func,
-  //     this.getLambdaIntegrationOptions(env)
-  //   )
-  //   const addedResource = resource.addResource('send-message')
-  //   addedResource.addMethod('POST', integration, this.getMethodOptions(env))
-  // }
-
-  // private getLambdaIntegrationOptions(
-  //   env: string
-  // ): apigateway.LambdaIntegrationOptions {
-  //   return env === 'dev'
-  //     ? {
-  //         integrationResponses: [
-  //           {
-  //             statusCode: '200',
-  //             responseParameters: {
-  //               'method.response.header.Access-Control-Allow-Origin': "'*'"
-  //             }
-  //           }
-  //         ]
-  //       }
-  //     : {}
-  // }
-  //
-  // private getMethodOptions(env: string): apigateway.MethodOptions {
-  //   return env === 'dev'
-  //     ? {
-  //         apiKeyRequired: true,
-  //         methodResponses: [
-  //           {
-  //             statusCode: '200',
-  //             responseParameters: {
-  //               'method.response.header.Access-Control-Allow-Origin': true
-  //             }
-  //           }
-  //         ]
-  //       }
-  //     : { apiKeyRequired: true }
-  // }
+  private methodOptions(env: string): apigw.MethodOptions {
+    let options: apigw.MethodOptions = {
+      apiKeyRequired: true,
+      methodResponses: [
+        {
+          statusCode: '200'
+        }
+      ]
+    }
+    if (env === 'dev') {
+      // allow cors
+      options = {
+        ...options,
+        methodResponses: [
+          {
+            statusCode: '200',
+            responseParameters: {
+              'method.response.header.Access-Control-Allow-Headers': true,
+              'method.response.header.Access-Control-Allow-Origin': true,
+              'method.response.header.Access-Control-Allow-Methods': true
+            }
+          }
+        ]
+      }
+    }
+    return options
+  }
 }

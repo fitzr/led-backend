@@ -1,12 +1,16 @@
 import * as cdk from '@aws-cdk/core'
 
 export class CdkUtils {
-  public static getEnv(scope: cdk.Construct): string {
-    const env = scope.node.tryGetContext('env')
-    if (!env) {
-      throw new Error('Context "env" was not defined.')
+  public static getContext(scope: cdk.Construct, key: string): string {
+    const value = scope.node.tryGetContext(key)
+    if (!value) {
+      throw new Error(`Context "${key}" was not defined.`)
     }
-    return env
+    return value
+  }
+
+  public static getEnv(scope: cdk.Construct): string {
+    return CdkUtils.getContext(scope, 'env')
   }
 
   public static makeId(scope: cdk.Construct, prefix: string): string {

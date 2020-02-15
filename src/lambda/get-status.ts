@@ -1,6 +1,6 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 
-class Hello {
+class GetStatus {
   public static async handler(
     event: APIGatewayEvent,
     context: Context
@@ -20,4 +20,4 @@ class Hello {
   }
 }
 
-export const handler = Hello.handler
+export const handler = GetStatus.handler
