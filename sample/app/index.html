@@ -65,10 +65,10 @@
     },
     methods: {
       sendMessage() {
-        this.fetch(`${this.apiRoot}/message`, 'POST', this.message)
+        this.fetch(`${this.apiRoot}/leds/${this.deviceId}/message`, 'POST', this.message)
       },
       checkStatus() {
-        this.fetch(`${this.apiRoot}/status`, 'GET')
+        this.fetch(`${this.apiRoot}/leds/${this.deviceId}/status`, 'GET')
       },
       async fetch(url, method, body) {
         try {

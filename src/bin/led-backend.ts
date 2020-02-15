@@ -2,7 +2,14 @@
 import 'source-map-support/register'
 import * as cdk from '@aws-cdk/core'
 import { LedBackendStack } from '../lib/led-backend-stack'
-import { CdkUtils } from '../lib/cdk-utils'
+import { initialize, helper } from '../lib/stack-helper'
 
-const app = new cdk.App()
-new LedBackendStack(app, CdkUtils.makeId(app, 'LEDBackendStack'))
+const execute = async (): Promise<void> => {
+  const app = new cdk.App()
+  await initialize(app)
+  new LedBackendStack(app, helper.makeId('LEDBackendStack'), {
+    env: { region: helper.region }
+  })
+}
+
+execute()

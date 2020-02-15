@@ -1,29 +1,32 @@
 import * as cdk from '@aws-cdk/core'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as apigw from '@aws-cdk/aws-apigateway'
-import { CdkUtils } from './cdk-utils'
+import { helper } from './stack-helper'
+import { LedBackendLambda } from './led-backend-lambda'
 
 export class LedBackendApi extends cdk.Construct {
   static readonly API_VERSION = 'v1'
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: cdk.Construct, id: string, lambda: LedBackendLambda) {
     super(scope, id)
-    const env = CdkUtils.getEnv(scope)
-    const api = this.createApi(env)
-    const resource = api.root.addResource(LedBackendApi.API_VERSION)
-    this.addGetStatusMethod(resource, env)
-    this.addSendMessageMethod(resource, env)
+    const api = this.createApi()
+    const resource = api.root
+      .addResource(LedBackendApi.API_VERSION)
+      .addResource('leds')
+      .addResource('{thing_name}')
+    this.addGetStatusMethod(resource, lambda.getStatusFunction)
+    this.addSendMessageMethod(resource, lambda.sendMessageFunction)
   }
 
-  private createApi(env: string): apigw.RestApi {
+  private createApi(): apigw.RestApi {
     let props: apigw.RestApiProps = {
-      restApiName: `led-backend-api-${env}`,
+      restApiName: helper.makeId('led-backend-api'),
       description: 'APIs for LED app.',
       deployOptions: {
-        stageName: env
+        stageName: helper.env
       }
     }
-    if (env === 'dev') {
+    if (helper.isDev) {
       // allow cors
       props = {
         ...props,
@@ -44,37 +47,33 @@ export class LedBackendApi extends cdk.Construct {
     return api
   }
 
-  private addGetStatusMethod(resource: apigw.Resource, env: string): void {
-    const func = new lambda.Function(this, 'GetStatusFunction', {
-      runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'get-status.handler',
-      code: lambda.Code.fromAsset('src/lambda')
-    })
+  private addGetStatusMethod(
+    resource: apigw.Resource,
+    func: lambda.Function
+  ): void {
     resource
       .addResource('status')
       .addMethod(
         'GET',
-        new apigw.LambdaIntegration(func, this.integrationOptions(env)),
-        this.methodOptions(env)
+        new apigw.LambdaIntegration(func, this.integrationOptions()),
+        this.methodOptions()
       )
   }
 
-  private addSendMessageMethod(resource: apigw.Resource, env: string): void {
-    const func = new lambda.Function(this, 'SendMessageFunction', {
-      runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'send-message.handler',
-      code: lambda.Code.fromAsset('src/lambda')
-    })
+  private addSendMessageMethod(
+    resource: apigw.Resource,
+    func: lambda.Function
+  ): void {
     resource
       .addResource('message')
       .addMethod(
         'POST',
-        new apigw.LambdaIntegration(func, this.integrationOptions(env)),
-        this.methodOptions(env)
+        new apigw.LambdaIntegration(func, this.integrationOptions()),
+        this.methodOptions()
       )
   }
 
-  private integrationOptions(env: string): apigw.LambdaIntegrationOptions {
+  private integrationOptions(): apigw.LambdaIntegrationOptions {
     let options: apigw.LambdaIntegrationOptions = {
       passthroughBehavior: apigw.PassthroughBehavior.NEVER,
       proxy: false,
@@ -84,10 +83,11 @@ export class LedBackendApi extends cdk.Construct {
         }
       ],
       requestTemplates: {
-        'application/json': '{"statusCode": 200}'
+        'application/json':
+          '{"message": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
       }
     }
-    if (env === 'dev') {
+    if (helper.isDev) {
       // allow cors
       options = {
         ...options,
@@ -108,7 +108,7 @@ export class LedBackendApi extends cdk.Construct {
     return options
   }
 
-  private methodOptions(env: string): apigw.MethodOptions {
+  private methodOptions(): apigw.MethodOptions {
     let options: apigw.MethodOptions = {
       apiKeyRequired: true,
       methodResponses: [
@@ -117,7 +117,7 @@ export class LedBackendApi extends cdk.Construct {
         }
       ]
     }
-    if (env === 'dev') {
+    if (helper.isDev) {
       // allow cors
       options = {
         ...options,
