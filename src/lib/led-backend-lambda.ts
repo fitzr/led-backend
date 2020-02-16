@@ -9,34 +9,45 @@ export class LedBackendLambda extends cdk.Construct {
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id)
+    this.getStatusFunction = this.createGetStatusFunction()
+    this.sendMessageFunction = this.createSendMessageFunction()
+  }
 
-    const environment = {
-      region: helper.region,
-      endpoint: helper.iotEndpoint
-    }
-
-    this.getStatusFunction = new lambda.Function(this, 'GetStatusFunction', {
+  private createGetStatusFunction(): lambda.Function {
+    const func = new lambda.Function(this, 'GetStatusFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'get-status.handler',
       code: lambda.Code.fromAsset('src/lambda'),
-      environment
-    })
-
-    this.sendMessageFunction = new lambda.Function(
-      this,
-      'SendMessageFunction',
-      {
-        runtime: lambda.Runtime.NODEJS_12_X,
-        handler: 'send-message.handler',
-        code: lambda.Code.fromAsset('src/lambda'),
-        environment
+      environment: {
+        region: helper.region,
+        endpoint: helper.iotEndpoint
       }
-    )
-    this.sendMessageFunction.addToRolePolicy(
+    })
+    func.addToRolePolicy(
       new iam.PolicyStatement({
-        resources: [`arn:aws:iot:${helper.region}:*`],
-        actions: ['iot:Publish']
+        actions: ['iot:GetThingShadow'],
+        resources: [`arn:aws:iot:${helper.region}:*`]
       })
     )
+    return func
+  }
+
+  private createSendMessageFunction(): lambda.Function {
+    const func = new lambda.Function(this, 'SendMessageFunction', {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      handler: 'send-message.handler',
+      code: lambda.Code.fromAsset('src/lambda'),
+      environment: {
+        region: helper.region,
+        endpoint: helper.iotEndpoint
+      }
+    })
+    func.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['iot:Publish'],
+        resources: [`arn:aws:iot:${helper.region}:*`]
+      })
+    )
+    return func
   }
 }

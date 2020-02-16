@@ -29,8 +29,8 @@ const getContext = (scope: cdk.Construct, key: string): string => {
   return value
 }
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export let helper: StackHelper = {} as any
+// Helper instance.
+export let helper: StackHelper = {} as any // eslint-disable-line  @typescript-eslint/no-explicit-any
 
 // This method must be called once before using helper instance.
 export const initialize = async (scope: cdk.Construct): Promise<void> => {
@@ -38,14 +38,11 @@ export const initialize = async (scope: cdk.Construct): Promise<void> => {
   const region = getContext(scope, 'region')
 
   const iot = new aws.Iot({ region })
-  const res = await iot
-    .describeEndpoint({
-      endpointType: 'iot:Data'
-    })
-    .promise()
+  const res = await iot.describeEndpoint({ endpointType: 'iot:Data' }).promise()
   if (!res || !res.endpointAddress) {
     throw new Error(`Could not describe Iot endpoint.`)
   }
+
   helper = new StackHelper(env, region, res.endpointAddress as string)
 }
 

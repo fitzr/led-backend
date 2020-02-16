@@ -51,11 +51,15 @@ export class LedBackendApi extends cdk.Construct {
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
+    const requestTemplate = '{"thingName":"$input.params(\'thing_name\')"}'
     resource
       .addResource('status')
       .addMethod(
         'GET',
-        new apigw.LambdaIntegration(func, this.integrationOptions()),
+        new apigw.LambdaIntegration(
+          func,
+          this.integrationOptions(requestTemplate)
+        ),
         this.methodOptions()
       )
   }
@@ -64,75 +68,94 @@ export class LedBackendApi extends cdk.Construct {
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
+    const requestTemplate =
+      '{"message": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
     resource
       .addResource('message')
       .addMethod(
         'POST',
-        new apigw.LambdaIntegration(func, this.integrationOptions()),
+        new apigw.LambdaIntegration(
+          func,
+          this.integrationOptions(requestTemplate)
+        ),
         this.methodOptions()
       )
   }
 
-  private integrationOptions(): apigw.LambdaIntegrationOptions {
-    let options: apigw.LambdaIntegrationOptions = {
+  private integrationOptions(
+    requestTemplate: string
+  ): apigw.LambdaIntegrationOptions {
+    const responseParameters = helper.isDev
+      ? {
+          'method.response.header.Access-Control-Allow-Headers':
+            "'Content-Type,X-Api-Key'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Methods':
+            "'OPTIONS,GET,POST'"
+        }
+      : undefined
+    return {
       passthroughBehavior: apigw.PassthroughBehavior.NEVER,
       proxy: false,
       integrationResponses: [
         {
-          statusCode: '200'
+          statusCode: '200',
+          responseTemplates: {
+            'application/json': '$input.json("$")'
+          },
+          responseParameters
+        },
+        {
+          selectionPattern: 'Thing Not Found',
+          statusCode: '404',
+          responseTemplates: {
+            'application/json': JSON.stringify({
+              error: { message: 'Requested thing was not found.' }
+            })
+          },
+          responseParameters
+        },
+        {
+          selectionPattern: '(\n|.)+',
+          statusCode: '500',
+          responseTemplates: {
+            'application/json': JSON.stringify({
+              error: { message: 'Internal server error.' }
+            })
+          },
+          responseParameters
         }
       ],
       requestTemplates: {
-        'application/json':
-          '{"message": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
+        'application/json': requestTemplate
       }
     }
-    if (helper.isDev) {
-      // allow cors
-      options = {
-        ...options,
-        integrationResponses: [
-          {
-            statusCode: '200',
-            responseParameters: {
-              'method.response.header.Access-Control-Allow-Headers':
-                "'Content-Type,X-Api-Key'",
-              'method.response.header.Access-Control-Allow-Origin': "'*'",
-              'method.response.header.Access-Control-Allow-Methods':
-                "'OPTIONS,GET,POST'"
-            }
-          }
-        ]
-      }
-    }
-    return options
   }
 
   private methodOptions(): apigw.MethodOptions {
-    let options: apigw.MethodOptions = {
+    const responseParameters = helper.isDev
+      ? {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Origin': true,
+          'method.response.header.Access-Control-Allow-Methods': true
+        }
+      : undefined
+    return {
       apiKeyRequired: true,
       methodResponses: [
         {
-          statusCode: '200'
+          statusCode: '200',
+          responseParameters
+        },
+        {
+          statusCode: '404',
+          responseParameters
+        },
+        {
+          statusCode: '500',
+          responseParameters
         }
       ]
     }
-    if (helper.isDev) {
-      // allow cors
-      options = {
-        ...options,
-        methodResponses: [
-          {
-            statusCode: '200',
-            responseParameters: {
-              'method.response.header.Access-Control-Allow-Headers': true,
-              'method.response.header.Access-Control-Allow-Origin': true,
-              'method.response.header.Access-Control-Allow-Methods': true
-            }
-          }
-        ]
-      }
-    }
-    return options
   }
 }
