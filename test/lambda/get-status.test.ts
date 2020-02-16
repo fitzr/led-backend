@@ -90,12 +90,12 @@ describe('GetStatus', () => {
   test('should return not found error when the thing is not found', async () => {
     mockFn.mockImplementation(() => ({
       promise: async (): Promise<IotData.GetThingShadowResponse> => {
-        const ex = new Error('thing not found')
+        const ex = new Error("No shadow exists with name: 'nothing'")
         ex.name = 'ResourceNotFoundException'
         throw ex
       }
     }))
-    await expect(handler({ thingName: 'testThing' })).rejects.toEqual(
+    await expect(handler({ thingName: 'nothing' })).rejects.toEqual(
       new Error('Thing Not Found')
     )
   })
