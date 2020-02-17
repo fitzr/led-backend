@@ -1,11 +1,11 @@
 import { IotData } from 'aws-sdk'
 
-interface GetStatusRequest {
+interface GetConnectionRequest {
   thingName: string
 }
 
-class GetStatus {
-  public static async handler(request: GetStatusRequest): Promise<object> {
+class GetConnection {
+  public static async handler(request: GetConnectionRequest): Promise<object> {
     const iotData = new IotData({
       apiVersion: '2015-05-28',
       region: process.env.region,
@@ -17,7 +17,7 @@ class GetStatus {
     try {
       const result = await iotData.getThingShadow(params).promise()
       return {
-        power: GetStatus.isPowerOn(result) ? 'on' : 'off'
+        connection: GetConnection.isConnecting(result) ? 'active' : 'inactive'
       }
     } catch (e) {
       if (e.name === 'ResourceNotFoundException') {
@@ -28,21 +28,21 @@ class GetStatus {
     }
   }
 
-  static isPowerOn(result: IotData.GetThingShadowResponse): boolean {
+  static isConnecting(result: IotData.GetThingShadowResponse): boolean {
     const payload = JSON.parse((result.payload as string) || '{}')
-    const power = payload?.state?.reported?.power
-    if (power !== 'on') {
+    const connection = payload?.state?.reported?.connection
+    if (connection !== 'active') {
       return false
     }
-    const timestamp = payload?.metadata?.reported?.power?.timestamp
-    return timestamp ? GetStatus.isValidTimestamp(timestamp) : false
+    const timestamp = payload?.metadata?.reported?.connection?.timestamp
+    return timestamp ? GetConnection.isValidTimestamp(timestamp) : false
   }
 
   static isValidTimestamp(timestamp: number): boolean {
     const thresholdTime: number = process.env.thresholdTime
       ? parseInt(process.env.thresholdTime, 10)
       : 2 * 60 // timestamp threshold default 2 minutes
-    return timestamp + thresholdTime > GetStatus.getCurrentTime()
+    return timestamp + thresholdTime > GetConnection.getCurrentTime()
   }
 
   static getCurrentTime(): number {
@@ -50,4 +50,4 @@ class GetStatus {
   }
 }
 
-export const handler = GetStatus.handler
+export const handler = GetConnection.handler

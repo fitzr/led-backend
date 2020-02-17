@@ -4,19 +4,19 @@ import * as iam from '@aws-cdk/aws-iam'
 import { helper } from './stack-helper'
 
 export class LedBackendLambda extends cdk.Construct {
-  public readonly getStatusFunction: lambda.Function
-  public readonly sendMessageFunction: lambda.Function
+  public readonly getConnectionFunction: lambda.Function
+  public readonly updateStateFunction: lambda.Function
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id)
-    this.getStatusFunction = this.createGetStatusFunction()
-    this.sendMessageFunction = this.createSendMessageFunction()
+    this.getConnectionFunction = this.createGetConnectionFunction()
+    this.updateStateFunction = this.createUpdateStateFunction()
   }
 
-  private createGetStatusFunction(): lambda.Function {
-    const func = new lambda.Function(this, 'GetStatusFunction', {
+  private createGetConnectionFunction(): lambda.Function {
+    const func = new lambda.Function(this, 'GetConnectionFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'get-status.handler',
+      handler: 'get-connection.handler',
       code: lambda.Code.fromAsset('src/lambda'),
       environment: {
         region: helper.region,
@@ -32,10 +32,10 @@ export class LedBackendLambda extends cdk.Construct {
     return func
   }
 
-  private createSendMessageFunction(): lambda.Function {
-    const func = new lambda.Function(this, 'SendMessageFunction', {
+  private createUpdateStateFunction(): lambda.Function {
+    const func = new lambda.Function(this, 'UpdateStateFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'send-message.handler',
+      handler: 'update-state.handler',
       code: lambda.Code.fromAsset('src/lambda'),
       environment: {
         region: helper.region,
@@ -44,7 +44,13 @@ export class LedBackendLambda extends cdk.Construct {
     })
     func.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ['iot:Publish'],
+        actions: ['iot:DescribeThing'],
+        resources: [`arn:aws:iot:${helper.region}:*`]
+      })
+    )
+    func.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['iot:UpdateThingShadow'],
         resources: [`arn:aws:iot:${helper.region}:*`]
       })
     )

@@ -2,11 +2,9 @@ import { IotData } from 'aws-sdk'
 
 const getCurrentTimeStamp = (): number => (Date.now() / 1000) | 0
 
-describe('GetStatus', () => {
+describe('GetConnection', () => {
   const mockFn = jest.fn()
-  let handler: (arg: {
-    thingName: string
-  }) => { statusCode: number; body: string }
+  let handler: (arg: { thingName: string }) => object
 
   beforeAll(() => {
     jest.mock('aws-sdk', () => ({
@@ -15,7 +13,7 @@ describe('GetStatus', () => {
       }))
     }))
     // eslint-disable-next @typescript-eslint/no-var-requires
-    handler = require('../../src/lambda/get-status').handler
+    handler = require('../../src/lambda/get-connection').handler
     process.env.region = 'ap-northeast-1'
     process.env.endpoint = 'example.com'
   })
@@ -32,11 +30,11 @@ describe('GetStatus', () => {
   test('returns connecting status', async () => {
     const payload = {
       state: {
-        reported: { power: 'on' }
+        reported: { connection: 'active' }
       },
       metadata: {
         reported: {
-          power: { timestamp: getCurrentTimeStamp() - 115 } // less than threshold 120 (2 minutes)
+          connection: { timestamp: getCurrentTimeStamp() - 115 } // less than threshold 120 (2 minutes)
         }
       }
     }
@@ -49,10 +47,10 @@ describe('GetStatus', () => {
       }
     })
     const response = await handler({ thingName: 'testThing' })
-    expect(response).toEqual({ power: 'on' })
+    expect(response).toEqual({ connection: 'active' })
   })
 
-  test('should return disconnected status when shadow is initial value', async () => {
+  test('should return inactive when shadow is initial value', async () => {
     const payload = {
       metadata: {},
       timestamp: getCurrentTimeStamp(),
@@ -64,17 +62,17 @@ describe('GetStatus', () => {
       })
     }))
     const response = await handler({ thingName: 'testThing' })
-    expect(response).toEqual({ power: 'off' })
+    expect(response).toEqual({ connection: 'inactive' })
   })
 
-  test('should return disconnected status when timestamp is before than threshold', async () => {
+  test('should return inactive when timestamp is before than threshold', async () => {
     const payload = {
       state: {
-        reported: { power: 'on' }
+        reported: { connection: 'active' }
       },
       metadata: {
         reported: {
-          power: { timestamp: getCurrentTimeStamp() - 125 } // greater than threshold 120 (2 minutes)
+          connection: { timestamp: getCurrentTimeStamp() - 125 } // greater than threshold 120 (2 minutes)
         }
       }
     }
@@ -84,7 +82,7 @@ describe('GetStatus', () => {
       })
     }))
     const response = await handler({ thingName: 'testThing' })
-    expect(response).toEqual({ power: 'off' })
+    expect(response).toEqual({ connection: 'inactive' })
   })
 
   test('should return not found error when the thing is not found', async () => {

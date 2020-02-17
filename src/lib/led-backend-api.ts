@@ -14,8 +14,8 @@ export class LedBackendApi extends cdk.Construct {
       .addResource(LedBackendApi.API_VERSION)
       .addResource('leds')
       .addResource('{thing_name}')
-    this.addGetStatusMethod(resource, lambda.getStatusFunction)
-    this.addSendMessageMethod(resource, lambda.sendMessageFunction)
+    this.addGetConnectionMethod(resource, lambda.getConnectionFunction)
+    this.addUpdateStateMethod(resource, lambda.updateStateFunction)
   }
 
   private createApi(): apigw.RestApi {
@@ -47,13 +47,13 @@ export class LedBackendApi extends cdk.Construct {
     return api
   }
 
-  private addGetStatusMethod(
+  private addGetConnectionMethod(
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
     const requestTemplate = '{"thingName":"$input.params(\'thing_name\')"}'
     resource
-      .addResource('status')
+      .addResource('connection')
       .addMethod(
         'GET',
         new apigw.LambdaIntegration(
@@ -64,16 +64,16 @@ export class LedBackendApi extends cdk.Construct {
       )
   }
 
-  private addSendMessageMethod(
+  private addUpdateStateMethod(
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
     const requestTemplate =
-      '{"message": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
+      '{"state": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
     resource
-      .addResource('message')
+      .addResource('state')
       .addMethod(
-        'POST',
+        'PUT',
         new apigw.LambdaIntegration(
           func,
           this.integrationOptions(requestTemplate)
@@ -102,6 +102,16 @@ export class LedBackendApi extends cdk.Construct {
           statusCode: '200',
           responseTemplates: {
             'application/json': '$input.json("$")'
+          },
+          responseParameters
+        },
+        {
+          selectionPattern: 'Bad Request',
+          statusCode: '400',
+          responseTemplates: {
+            'application/json': JSON.stringify({
+              error: { message: 'Requested state was not valid.' }
+            })
           },
           responseParameters
         },
