@@ -14,7 +14,8 @@ export class LedBackendApi extends cdk.Construct {
       .addResource(LedBackendApi.API_VERSION)
       .addResource('leds')
       .addResource('{thing_name}')
-    this.addGetConnectionMethod(resource, lambda.getConnectionFunction)
+      .addResource('state')
+    this.addGetConnectionMethod(resource, lambda.getStateFunction)
     this.addUpdateStateMethod(resource, lambda.updateStateFunction)
   }
 
@@ -51,38 +52,37 @@ export class LedBackendApi extends cdk.Construct {
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
+    const successStatusCode = '200'
     const requestTemplate = '{"thingName":"$input.params(\'thing_name\')"}'
-    resource
-      .addResource('connection')
-      .addMethod(
-        'GET',
-        new apigw.LambdaIntegration(
-          func,
-          this.integrationOptions(requestTemplate)
-        ),
-        this.methodOptions()
-      )
+    resource.addMethod(
+      'GET',
+      new apigw.LambdaIntegration(
+        func,
+        this.integrationOptions(successStatusCode, requestTemplate)
+      ),
+      this.methodOptions(successStatusCode)
+    )
   }
 
   private addUpdateStateMethod(
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
+    const successStatusCode = '202' // Accepted
     const requestTemplate =
       '{"state": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
-    resource
-      .addResource('state')
-      .addMethod(
-        'PUT',
-        new apigw.LambdaIntegration(
-          func,
-          this.integrationOptions(requestTemplate)
-        ),
-        this.methodOptions()
-      )
+    resource.addMethod(
+      'PUT',
+      new apigw.LambdaIntegration(
+        func,
+        this.integrationOptions(successStatusCode, requestTemplate)
+      ),
+      this.methodOptions(successStatusCode)
+    )
   }
 
   private integrationOptions(
+    successStatusCode: string,
     requestTemplate: string
   ): apigw.LambdaIntegrationOptions {
     const responseParameters = helper.isDev
@@ -91,7 +91,7 @@ export class LedBackendApi extends cdk.Construct {
             "'Content-Type,X-Api-Key'",
           'method.response.header.Access-Control-Allow-Origin': "'*'",
           'method.response.header.Access-Control-Allow-Methods':
-            "'OPTIONS,GET,POST'"
+            "'OPTIONS,GET,PUT'"
         }
       : undefined
     return {
@@ -99,19 +99,9 @@ export class LedBackendApi extends cdk.Construct {
       proxy: false,
       integrationResponses: [
         {
-          statusCode: '200',
+          statusCode: successStatusCode,
           responseTemplates: {
             'application/json': '$input.json("$")'
-          },
-          responseParameters
-        },
-        {
-          selectionPattern: 'Bad Request',
-          statusCode: '400',
-          responseTemplates: {
-            'application/json': JSON.stringify({
-              error: { message: 'Requested state was not valid.' }
-            })
           },
           responseParameters
         },
@@ -142,7 +132,7 @@ export class LedBackendApi extends cdk.Construct {
     }
   }
 
-  private methodOptions(): apigw.MethodOptions {
+  private methodOptions(successStatusCode: string): apigw.MethodOptions {
     const responseParameters = helper.isDev
       ? {
           'method.response.header.Access-Control-Allow-Headers': true,
@@ -154,7 +144,7 @@ export class LedBackendApi extends cdk.Construct {
       apiKeyRequired: true,
       methodResponses: [
         {
-          statusCode: '200',
+          statusCode: successStatusCode,
           responseParameters
         },
         {

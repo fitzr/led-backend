@@ -1,5 +1,5 @@
 import * as cdk from '@aws-cdk/core'
-import * as aws from 'aws-sdk'
+import { Iot } from 'aws-sdk'
 
 class StackHelper {
   public readonly env: string
@@ -21,7 +21,7 @@ class StackHelper {
   }
 }
 
-const getContext = (scope: cdk.Construct, key: string): string => {
+export const getContext = (scope: cdk.Construct, key: string): string => {
   const value = scope.node.tryGetContext(key)
   if (!value) {
     throw new Error(`Context "${key}" was not defined.`)
@@ -37,7 +37,7 @@ export const initialize = async (scope: cdk.Construct): Promise<void> => {
   const env = getContext(scope, 'env')
   const region = getContext(scope, 'region')
 
-  const iot = new aws.Iot({ region })
+  const iot = new Iot({ region })
   const res = await iot.describeEndpoint({ endpointType: 'iot:Data' }).promise()
   if (!res || !res.endpointAddress) {
     throw new Error(`Could not describe Iot endpoint.`)

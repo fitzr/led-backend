@@ -1,6 +1,6 @@
 import { IotData, Iot } from 'aws-sdk'
 
-interface UpdateStateRequest {
+export interface UpdateStateRequest {
   thingName: string
   state: object
 }
@@ -9,9 +9,8 @@ class UpdateState {
   public static async handler(request: UpdateStateRequest): Promise<object> {
     const { thingName, state } = request
     await UpdateState.validateThingName(thingName)
-    UpdateState.validateRequestedState(state)
     await UpdateState.publishUpdateState(thingName, state)
-    return { message: 'Updated' }
+    return state
   }
 
   static async validateThingName(thingName: string): Promise<void> {
@@ -25,10 +24,6 @@ class UpdateState {
         throw e
       }
     }
-  }
-
-  static validateRequestedState(state: object): void {
-    // TODO
   }
 
   static async publishUpdateState(

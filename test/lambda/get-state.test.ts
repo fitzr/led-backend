@@ -1,36 +1,30 @@
 import { IotData } from 'aws-sdk'
+import { GetStateRequest } from '../../src/lambda/get-state'
 
 const getCurrentTimeStamp = (): number => (Date.now() / 1000) | 0
 
-describe('GetConnection', () => {
-  const mockFn = jest.fn()
-  let handler: (arg: { thingName: string }) => object
+describe('GetState', () => {
+  const mockGetThingShadow = jest.fn()
+  let handler: (arg: GetStateRequest) => object
 
   beforeAll(() => {
     jest.mock('aws-sdk', () => ({
       IotData: jest.fn(() => ({
-        getThingShadow: mockFn
+        getThingShadow: mockGetThingShadow
       }))
     }))
     // eslint-disable-next @typescript-eslint/no-var-requires
-    handler = require('../../src/lambda/get-connection').handler
-    process.env.region = 'ap-northeast-1'
-    process.env.endpoint = 'example.com'
+    handler = require('../../src/lambda/get-state').handler
   })
 
   beforeEach(() => {
-    mockFn.mockClear()
+    mockGetThingShadow.mockClear()
   })
 
-  afterAll(() => {
-    delete process.env.region
-    delete process.env.endpoint
-  })
-
-  test('returns connecting status', async () => {
+  test('returns status', async () => {
     const payload = {
       state: {
-        reported: { connection: 'active' }
+        reported: { connection: 'active', power: 'on', brightness: 50 }
       },
       metadata: {
         reported: {
@@ -38,7 +32,7 @@ describe('GetConnection', () => {
         }
       }
     }
-    mockFn.mockImplementation(params => {
+    mockGetThingShadow.mockImplementation(params => {
       expect(params).toEqual({ thingName: 'testThing' })
       return {
         promise: async (): Promise<IotData.GetThingShadowResponse> => ({
@@ -47,16 +41,20 @@ describe('GetConnection', () => {
       }
     })
     const response = await handler({ thingName: 'testThing' })
-    expect(response).toEqual({ connection: 'active' })
+    expect(response).toEqual({
+      connection: 'active',
+      power: 'on',
+      brightness: 50
+    })
   })
 
-  test('should return inactive when shadow is initial value', async () => {
+  test('should return inactive connection when shadow is initial value', async () => {
     const payload = {
       metadata: {},
       timestamp: getCurrentTimeStamp(),
       version: 1
     }
-    mockFn.mockImplementation(() => ({
+    mockGetThingShadow.mockImplementation(() => ({
       promise: async (): Promise<IotData.GetThingShadowResponse> => ({
         payload: JSON.stringify(payload)
       })
@@ -65,7 +63,7 @@ describe('GetConnection', () => {
     expect(response).toEqual({ connection: 'inactive' })
   })
 
-  test('should return inactive when timestamp is before than threshold', async () => {
+  test('should return inactive connection when timestamp is before than threshold', async () => {
     const payload = {
       state: {
         reported: { connection: 'active' }
@@ -76,7 +74,7 @@ describe('GetConnection', () => {
         }
       }
     }
-    mockFn.mockImplementation(() => ({
+    mockGetThingShadow.mockImplementation(() => ({
       promise: async (): Promise<IotData.GetThingShadowResponse> => ({
         payload: JSON.stringify(payload)
       })
@@ -86,7 +84,7 @@ describe('GetConnection', () => {
   })
 
   test('should return not found error when the thing is not found', async () => {
-    mockFn.mockImplementation(() => ({
+    mockGetThingShadow.mockImplementation(() => ({
       promise: async (): Promise<IotData.GetThingShadowResponse> => {
         const ex = new Error("No shadow exists with name: 'nothing'")
         ex.name = 'ResourceNotFoundException'
@@ -99,7 +97,7 @@ describe('GetConnection', () => {
   })
 
   test('should return error when unexpected error is occurred', async () => {
-    mockFn.mockImplementation(() => ({
+    mockGetThingShadow.mockImplementation(() => ({
       promise: async (): Promise<IotData.GetThingShadowResponse> => {
         throw new Error('SOME ERROR')
       }

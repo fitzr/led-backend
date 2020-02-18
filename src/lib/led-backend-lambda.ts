@@ -4,19 +4,19 @@ import * as iam from '@aws-cdk/aws-iam'
 import { helper } from './stack-helper'
 
 export class LedBackendLambda extends cdk.Construct {
-  public readonly getConnectionFunction: lambda.Function
+  public readonly getStateFunction: lambda.Function
   public readonly updateStateFunction: lambda.Function
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id)
-    this.getConnectionFunction = this.createGetConnectionFunction()
+    this.getStateFunction = this.createGetStateFunction()
     this.updateStateFunction = this.createUpdateStateFunction()
   }
 
-  private createGetConnectionFunction(): lambda.Function {
-    const func = new lambda.Function(this, 'GetConnectionFunction', {
+  private createGetStateFunction(): lambda.Function {
+    const func = new lambda.Function(this, 'GetStateFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'get-connection.handler',
+      handler: 'get-state.handler',
       code: lambda.Code.fromAsset('src/lambda'),
       environment: {
         region: helper.region,

@@ -1,11 +1,11 @@
 import { IotData } from 'aws-sdk'
 
-interface GetConnectionRequest {
+export interface GetStateRequest {
   thingName: string
 }
 
-class GetConnection {
-  public static async handler(request: GetConnectionRequest): Promise<object> {
+class GetState {
+  public static async handler(request: GetStateRequest): Promise<object> {
     const iotData = new IotData({
       apiVersion: '2015-05-28',
       region: process.env.region,
@@ -16,9 +16,10 @@ class GetConnection {
     }
     try {
       const result = await iotData.getThingShadow(params).promise()
-      return {
-        connection: GetConnection.isConnecting(result) ? 'active' : 'inactive'
-      }
+      const payload = JSON.parse(result.payload as string)
+      return GetState.isConnecting(payload)
+        ? payload.state.reported
+        : { connection: 'inactive' }
     } catch (e) {
       if (e.name === 'ResourceNotFoundException') {
         throw new Error('Thing Not Found')
@@ -28,21 +29,21 @@ class GetConnection {
     }
   }
 
-  static isConnecting(result: IotData.GetThingShadowResponse): boolean {
-    const payload = JSON.parse((result.payload as string) || '{}')
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  static isConnecting(payload: any): boolean {
     const connection = payload?.state?.reported?.connection
     if (connection !== 'active') {
       return false
     }
     const timestamp = payload?.metadata?.reported?.connection?.timestamp
-    return timestamp ? GetConnection.isValidTimestamp(timestamp) : false
+    return timestamp ? GetState.isValidTimestamp(timestamp) : false
   }
 
   static isValidTimestamp(timestamp: number): boolean {
     const thresholdTime: number = process.env.thresholdTime
       ? parseInt(process.env.thresholdTime, 10)
       : 2 * 60 // timestamp threshold default 2 minutes
-    return timestamp + thresholdTime > GetConnection.getCurrentTime()
+    return timestamp + thresholdTime > GetState.getCurrentTime()
   }
 
   static getCurrentTime(): number {
@@ -50,4 +51,4 @@ class GetConnection {
   }
 }
 
-export const handler = GetConnection.handler
+export const handler = GetState.handler
