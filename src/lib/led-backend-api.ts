@@ -3,6 +3,7 @@ import * as lambda from '@aws-cdk/aws-lambda'
 import * as apigw from '@aws-cdk/aws-apigateway'
 import { helper } from './stack-helper'
 import { LedBackendLambda } from './led-backend-lambda'
+import { updateStateModel } from '../model/update-state'
 
 export class LedBackendApi extends cdk.Construct {
   static readonly API_VERSION = 'v1'
@@ -16,7 +17,7 @@ export class LedBackendApi extends cdk.Construct {
       .addResource('{thing_name}')
       .addResource('state')
     this.addGetConnectionMethod(resource, lambda.getStateFunction)
-    this.addUpdateStateMethod(resource, lambda.updateStateFunction)
+    this.addUpdateStateMethod(api, resource, lambda.updateStateFunction)
   }
 
   private createApi(): apigw.RestApi {
@@ -33,7 +34,7 @@ export class LedBackendApi extends cdk.Construct {
         ...props,
         defaultCorsPreflightOptions: {
           allowOrigins: apigw.Cors.ALL_ORIGINS,
-          allowMethods: apigw.Cors.ALL_METHODS,
+          allowMethods: ['GET', 'PUT', 'OPTIONS'],
           statusCode: 200
         }
       }
@@ -65,19 +66,38 @@ export class LedBackendApi extends cdk.Construct {
   }
 
   private addUpdateStateMethod(
+    api: apigw.RestApi,
     resource: apigw.Resource,
     func: lambda.Function
   ): void {
-    const successStatusCode = '202' // Accepted
+    // request body validation
+    const requestValidator = api.addRequestValidator('UpdateStateValidator', {
+      requestValidatorName: 'body-only',
+      validateRequestBody: true
+    })
+    const requestModels = {
+      'application/json': new apigw.Model(
+        this,
+        `UpdateStateModel${LedBackendApi.API_VERSION}`,
+        {
+          restApi: api,
+          schema: updateStateModel
+        }
+      )
+    }
+
+    // request mapping
     const requestTemplate =
       '{"state": $input.json("$"),"thingName":"$input.params(\'thing_name\')"}'
+
+    const successStatusCode = '202' // Accepted
     resource.addMethod(
       'PUT',
       new apigw.LambdaIntegration(
         func,
         this.integrationOptions(successStatusCode, requestTemplate)
       ),
-      this.methodOptions(successStatusCode)
+      this.methodOptions(successStatusCode, requestValidator, requestModels)
     )
   }
 
@@ -110,7 +130,7 @@ export class LedBackendApi extends cdk.Construct {
           statusCode: '404',
           responseTemplates: {
             'application/json': JSON.stringify({
-              error: { message: 'Requested thing was not found.' }
+              message: 'Requested thing was not found'
             })
           },
           responseParameters
@@ -120,7 +140,7 @@ export class LedBackendApi extends cdk.Construct {
           statusCode: '500',
           responseTemplates: {
             'application/json': JSON.stringify({
-              error: { message: 'Internal server error.' }
+              message: 'Internal server error'
             })
           },
           responseParameters
@@ -132,7 +152,11 @@ export class LedBackendApi extends cdk.Construct {
     }
   }
 
-  private methodOptions(successStatusCode: string): apigw.MethodOptions {
+  private methodOptions(
+    successStatusCode: string,
+    requestValidator?: apigw.RequestValidator,
+    requestModels?: { [param: string]: apigw.IModel }
+  ): apigw.MethodOptions {
     const responseParameters = helper.isDev
       ? {
           'method.response.header.Access-Control-Allow-Headers': true,
@@ -142,6 +166,8 @@ export class LedBackendApi extends cdk.Construct {
       : undefined
     return {
       apiKeyRequired: true,
+      requestValidator,
+      requestModels,
       methodResponses: [
         {
           statusCode: successStatusCode,
