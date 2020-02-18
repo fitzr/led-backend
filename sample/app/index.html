@@ -11,6 +11,12 @@
       background-color: #DADADA;
       padding-top: 5%;
     }
+    button {
+      min-width: 100px;
+    }
+    button.ui.button.white {
+      background-color: white;
+    }
   </style>
 </head>
 <body>
@@ -28,21 +34,37 @@
         <label>API KEY</label>
         <input type="text" v-model="apiKey">
       </div>
+      <div class="field">
+        <label>THING NAME</label>
+        <input type="text" v-model="thingName">
+      </div>
       <div class="ui hidden divider"></div>
-      <div class="ui grey inverted segment">
+      <div class="ui teal inverted segment">
         <div class="field">
-          <label>DEVICE ID</label>
-          <input type="text" v-model="deviceId">
+          <label>POWER</label>
+          <div class="ui toggle checkbox">
+            <input type="checkbox" v-model="power">
+            <label v-if="power">ON</label>
+            <label v-else>OFF</label>
+          </div>
         </div>
-        <div class="ui hidden divider"></div>
         <div class="field">
-          <label>MESSAGE</label>
-          <textarea v-model="message"/>
+          <label>COLOR</label>
+          <div class="ui buttons">
+            <button class="ui button" :class="{gray: color!='white', white: color=='white'}" @click="color='white'">WHITE</button>
+            <button class="ui button" :class="{gray: color!='red', red: color=='red' }" @click="color='red'">RED</button>
+            <button class="ui button" :class="{gray: color!='green', green: color=='green' }" @click="color='green'">GREEN</button>
+          </div>
         </div>
-        <button class="ui button" @click="sendMessage">Send Message</button>
-        <button class="ui button" @click="checkStatus">Check Status</button>
+        <div class="field">
+          <label>BRIGHTNESS</label>
+          <input type="range" step="10" v-model="brightness" @change="changeBrightness"/>
+          <label>{{brightness}}</label>
+        </div>
+        <button class="ui blue button" @click="checkStatus">Check Status</button>
         <div v-if="result">
           <div class="ui hidden divider"></div>
+          <label>RESPONSE</label>
           <div v-if="result" class="ui message" :class="{ positive: result && !error , negative: result && error}">
             {{result}}
           </div>
@@ -58,17 +80,31 @@
     data: {
       apiRoot: null,
       apiKey: null,
-      deviceId: null,
+      thingName: null,
       message: null,
       result: null,
       error: false,
+      power: false,
+      brightness: 50,
+      color: 'white'
+    },
+    watch: {
+      power: function (val) {
+        this.updateState({ power: val ? 'on' : 'off'})
+      },
+      color: function (val) {
+        this.updateState({ color: val })
+      }
     },
     methods: {
-      sendMessage() {
-        this.fetch(`${this.apiRoot}/leds/${this.deviceId}/message`, 'POST', this.message)
+      changeBrightness() {
+        this.updateState({ brightness: this.brightness })
+      },
+      updateState(state) {
+        this.fetch(`${this.apiRoot}/leds/${this.thingName}/state`, 'PUT', JSON.stringify(state))
       },
       checkStatus() {
-        this.fetch(`${this.apiRoot}/leds/${this.deviceId}/status`, 'GET')
+        this.fetch(`${this.apiRoot}/leds/${this.thingName}/state`, 'GET')
       },
       async fetch(url, method, body) {
         try {
