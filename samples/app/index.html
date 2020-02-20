@@ -52,21 +52,23 @@
           <label>COLOR</label>
           <div class="ui buttons">
             <button class="ui button" :class="{gray: color!='white', white: color=='white'}" @click="color='white'">WHITE</button>
-            <button class="ui button" :class="{gray: color!='red', red: color=='red' }" @click="color='red'">RED</button>
             <button class="ui button" :class="{gray: color!='green', green: color=='green' }" @click="color='green'">GREEN</button>
+            <button class="ui button" :class="{gray: color!='red', red: color=='red' }" @click="color='red'">RED</button>
           </div>
         </div>
         <div class="field">
           <label>BRIGHTNESS</label>
-          <input type="range" step="10" v-model="brightness" @change="changeBrightness"/>
+          <input type="range" step="10" v-model.number="brightness" @change="changeBrightness"/>
           <label>{{brightness}}</label>
         </div>
-        <button class="ui blue button" @click="checkStatus">Check Status</button>
-        <div v-if="result">
+        <button class="ui blue button" @click="checkStatus" :class="{ disabled: disabled }">Check Status</button>
+        <div v-if="resultMessage">
           <div class="ui hidden divider"></div>
           <label>RESPONSE</label>
-          <div v-if="result" class="ui message" :class="{ positive: result && !error , negative: result && error}">
-            {{result}}
+          <div class="ui message" :class="messageClass">
+            {{resultCode}}
+            <br v-if="resultCode" />
+            {{resultMessage}}
           </div>
         </div>
       </div>
@@ -81,19 +83,33 @@
       apiRoot: null,
       apiKey: null,
       thingName: null,
-      message: null,
-      result: null,
-      error: false,
       power: false,
       brightness: 50,
-      color: 'white'
+      color: 'white',
+      resultCode: null,
+      resultMessage: null,
     },
     watch: {
-      power: function (val) {
+      power(val) {
         this.updateState({ power: val ? 'on' : 'off'})
       },
-      color: function (val) {
+      color(val) {
         this.updateState({ color: val })
+      }
+    },
+    computed: {
+      url() {
+        return `${this.apiRoot}/leds/${this.thingName}/state`
+      },
+      disabled() {
+        return !(this.apiRoot && this.apiKey && this.thingName)
+      },
+      messageClass() {
+        const resultStatus = this.resultCode && (this.resultCode / 100 | 0) === 2
+        return {
+          'positive': resultStatus,
+          'negative': resultStatus === false
+        }
       }
     },
     methods: {
@@ -101,14 +117,19 @@
         this.updateState({ brightness: this.brightness })
       },
       updateState(state) {
-        this.fetch(`${this.apiRoot}/leds/${this.thingName}/state`, 'PUT', JSON.stringify(state))
+        this.fetch('PUT', JSON.stringify(state))
       },
       checkStatus() {
-        this.fetch(`${this.apiRoot}/leds/${this.thingName}/state`, 'GET')
+        this.fetch('GET')
       },
-      async fetch(url, method, body) {
+      async fetch(method, body) {
+        if (this.disabled) {
+          return
+        }
         try {
-          const res = await fetch(url, {
+          this.resultCode = null
+          this.resultMessage = 'processing...'
+          const res = await fetch(this.url, {
             mode: 'cors',
             method,
             body,
@@ -117,11 +138,20 @@
               'x-api-key': this.apiKey
             }
           })
-          this.result = await res.json()
-          this.error = false
+          this.resultCode = res.status
+          if (res.ok) {
+            this.resultMessage =  await res.json()
+          } else {
+            try {
+              const error = await res.json()
+              this.resultMessage = error.message
+            } catch {
+              this.resultMessage = res.statusText
+            }
+          }
         } catch (e) {
-          this.result = e
-          this.error = true
+          this.resultCode = null
+          this.resultMessage = e
         }
       }
     }

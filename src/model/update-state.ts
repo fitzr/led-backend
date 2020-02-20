@@ -21,7 +21,7 @@ export const updateStateModel: JsonSchema = {
     color: {
       type: JsonSchemaType.STRING,
       minLength: 1,
-      maxLength: 30,
+      maxLength: 30
     }
   },
   additionalProperties: false

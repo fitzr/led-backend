@@ -11,32 +11,30 @@ export class LedBackendApi extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, lambda: LedBackendLambda) {
     super(scope, id)
     const api = this.createApi()
+    this.createGatewayResponses(api)
     const resource = api.root
       .addResource(LedBackendApi.API_VERSION)
       .addResource('leds')
       .addResource('{thing_name}')
-      .addResource('state')
+      .addResource('state', {
+        defaultCorsPreflightOptions: helper.isDev
+          ? {
+              allowOrigins: apigw.Cors.ALL_ORIGINS,
+              allowMethods: ['GET', 'PUT', 'OPTIONS'],
+              allowHeaders: ['Content-Type', 'X-Api-Key']
+            }
+          : undefined
+      })
     this.addGetConnectionMethod(resource, lambda.getStateFunction)
     this.addUpdateStateMethod(api, resource, lambda.updateStateFunction)
   }
 
   private createApi(): apigw.RestApi {
-    let props: apigw.RestApiProps = {
+    const props: apigw.RestApiProps = {
       restApiName: helper.makeId('led-backend-api'),
       description: 'APIs for LED app.',
       deployOptions: {
         stageName: helper.env
-      }
-    }
-    if (helper.isDev) {
-      // allow cors
-      props = {
-        ...props,
-        defaultCorsPreflightOptions: {
-          allowOrigins: apigw.Cors.ALL_ORIGINS,
-          allowMethods: ['GET', 'PUT', 'OPTIONS'],
-          statusCode: 200
-        }
       }
     }
     const api = new apigw.RestApi(this, 'RestApi', props)
@@ -47,6 +45,32 @@ export class LedBackendApi extends cdk.Construct {
     })
     plan.addApiStage({ stage: api.deploymentStage })
     return api
+  }
+
+  private createGatewayResponses(api: apigw.RestApi): void {
+    if (!helper.isDev) {
+      return
+    }
+    new apigw.CfnGatewayResponse(this, 'GatewayResponseInvalidApiKey', {
+      responseType: 'INVALID_API_KEY',
+      restApiId: api.restApiId,
+      responseParameters: {
+        'gatewayresponse.header.Access-Control-Allow-Methods':
+          "'OPTIONS,GET,PUT'",
+        'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+        'gatewayresponse.header.Access-Control-Allow-Origin': "'*'"
+      }
+    })
+    new apigw.CfnGatewayResponse(this, 'GatewayResponseBadRequestBody', {
+      responseType: 'BAD_REQUEST_BODY',
+      restApiId: api.restApiId,
+      responseParameters: {
+        'gatewayresponse.header.Access-Control-Allow-Methods':
+          "'OPTIONS,GET,PUT'",
+        'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+        'gatewayresponse.header.Access-Control-Allow-Origin': "'*'"
+      }
+    })
   }
 
   private addGetConnectionMethod(
