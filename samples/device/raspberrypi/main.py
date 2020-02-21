@@ -1,14 +1,14 @@
 import time
 import sys
 import json
-from led import mqtt as mq, state, gpio
+from led import mqtt as mq, state, led
 
 UPDATE_TOPIC = '$aws/things/TestThing/shadow/update'
 DELTA_TOPIC = '$aws/things/TestThing/shadow/update/delta'
 
 state = state.State()
 mqtt = mq.Mqtt()
-gpio = gpio.Gpio()
+led = led.Led()
 
 
 def on_connect(client, userdata, flag, rc):
@@ -35,7 +35,7 @@ def update_state(payload):
     requested_state = json.loads(payload)['state']
     for k, v in requested_state.items():
         if k in ['power', 'color', 'brightness']:
-            getattr(gpio, k)(v)
+            getattr(led, k)(v)
     state.update(requested_state)
     report_state()
 

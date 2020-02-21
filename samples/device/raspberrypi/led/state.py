@@ -1,5 +1,3 @@
-from . import color
-
 
 class State:
     def __init__(self):
@@ -7,7 +5,7 @@ class State:
             'connection': 'active',
             'power': 'off',
             'brightness': 50,
-            'color': color.Color.WHITE
+            'color': 'white'
         }
 
     def update(self, state):

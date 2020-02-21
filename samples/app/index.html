@@ -46,7 +46,7 @@
         <div class="field">
           <label>POWER</label>
           <div class="ui toggle checkbox">
-            <input type="checkbox" v-model="power">
+            <input type="checkbox" v-model="power" @change="changePower">
             <label v-if="power">ON</label>
             <label v-else>OFF</label>
           </div>
@@ -54,9 +54,9 @@
         <div class="field">
           <label>COLOR</label>
           <div class="ui buttons">
-            <button class="ui button" :class="{gray: color!='white', white: color=='white'}" @click="color='white'">WHITE</button>
-            <button class="ui button" :class="{gray: color!='green', green: color=='green' }" @click="color='green'">GREEN</button>
-            <button class="ui button" :class="{gray: color!='red', red: color=='red' }" @click="color='red'">RED</button>
+            <button class="ui button" :class="{gray: color!='white', white: color=='white'}" @click="changeColor('white')">WHITE</button>
+            <button class="ui button" :class="{gray: color!='green', green: color=='green' }" @click="changeColor('green')">GREEN</button>
+            <button class="ui button" :class="{gray: color!='red', red: color=='red' }" @click="changeColor('red')">RED</button>
           </div>
         </div>
         <div class="field">
@@ -92,14 +92,6 @@
       resultCode: null,
       resultMessage: null,
     },
-    watch: {
-      power(val) {
-        this.updateState({ power: val ? 'on' : 'off'})
-      },
-      color(val) {
-        this.updateState({ color: val })
-      }
-    },
     computed: {
       url() {
         return `${this.apiRoot}/leds/${this.thingName}/state`
@@ -116,14 +108,25 @@
       }
     },
     methods: {
+      changePower() {
+        this.updateState({ power: this.power ? 'on' : 'off'})
+      },
       changeBrightness() {
         this.updateState({ brightness: this.brightness })
+      },
+      changeColor(color) {
+        this.color = color
+        this.updateState({ color })
       },
       updateState(state) {
         this.fetch('PUT', JSON.stringify(state))
       },
-      checkStatus() {
-        this.fetch('GET')
+      async checkStatus() {
+        await this.fetch('GET')
+        const { power, color, brightness } = this.resultMessage
+        if (power !== undefined) this.power = power === 'on'
+        if (color !== undefined) this.color = color
+        if (brightness !== undefined) this.brightness = brightness
       },
       async fetch(method, body) {
         if (this.disabled) {
