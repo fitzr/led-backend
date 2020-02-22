@@ -2,6 +2,7 @@ import * as cdk from '@aws-cdk/core'
 import { LedBackendApi } from './led-backend-api'
 import { helper } from './stack-helper'
 import { LedBackendLambda } from './led-backend-lambda'
+import { LedBackendIot } from './led-backend-iot'
 
 export class LedBackendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -9,5 +10,6 @@ export class LedBackendStack extends cdk.Stack {
 
     const lambda = new LedBackendLambda(this, helper.makeId('LedBackendLambda'))
     new LedBackendApi(this, helper.makeId('LedBackendApi'), lambda)
+    new LedBackendIot(this, helper.makeId('LedBackendIot'))
   }
 }

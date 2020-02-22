@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 
+CLIENT_ID = 'TestThing'
 CA = '.tmp/test-root-CA.crt'
 CERT = '.tmp/test-thing-certificate.pem.crt'
 PRIVATE = '.tmp/test-thing-private.pem.key'
@@ -13,7 +14,7 @@ def endpoint():
 
 class Mqtt:
     def __init__(self):
-        self.__client = mqtt.Client()
+        self.__client = mqtt.Client(client_id=CLIENT_ID)
         self.__client.tls_set(ca_certs=CA, certfile=CERT, keyfile=PRIVATE)
 
     def connect(self):
