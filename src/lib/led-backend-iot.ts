@@ -38,7 +38,7 @@ export class LedBackendIot extends cdk.Construct {
     })
 
     new iot.CfnPolicy(this, 'IotPolicy', {
-      policyName: 'PusSubShadowPolicy',
+      policyName: 'PubSubShadowPolicy',
       policyDocument
     })
   }
