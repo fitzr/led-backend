@@ -1,0 +1,493 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LedBackendLambda had no diff 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515ArtifactHash320F49D6": Object {
+      "Description": "Artifact hash for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3": Object {
+      "Description": "S3 bucket for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14": Object {
+      "Description": "S3 key for asset version \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "LBLGetStateFunctionC6816607": Object {
+      "DependsOn": Array [
+        "LBLGetStateFunctionServiceRoleDefaultPolicy1297C7FC",
+        "LBLGetStateFunctionServiceRole075AA9F2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {},
+        },
+        "Handler": "get-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LBLGetStateFunctionServiceRole075AA9F2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LBLGetStateFunctionServiceRole075AA9F2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LBLGetStateFunctionServiceRoleDefaultPolicy1297C7FC": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:GetThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:undefined:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LBLGetStateFunctionServiceRoleDefaultPolicy1297C7FC",
+        "Roles": Array [
+          Object {
+            "Ref": "LBLGetStateFunctionServiceRole075AA9F2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LBLUpdateStateFunction04B682C4": Object {
+      "DependsOn": Array [
+        "LBLUpdateStateFunctionServiceRoleDefaultPolicy2BA252A8",
+        "LBLUpdateStateFunctionServiceRole330E71F1",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {},
+        },
+        "Handler": "update-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LBLUpdateStateFunctionServiceRole330E71F1",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LBLUpdateStateFunctionServiceRole330E71F1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LBLUpdateStateFunctionServiceRoleDefaultPolicy2BA252A8": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:DescribeThing",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:undefined:*",
+            },
+            Object {
+              "Action": "iot:UpdateThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:undefined:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LBLUpdateStateFunctionServiceRoleDefaultPolicy2BA252A8",
+        "Roles": Array [
+          Object {
+            "Ref": "LBLUpdateStateFunctionServiceRole330E71F1",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;
+
+exports[`LedBackendLambda has no diff 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515ArtifactHash320F49D6": Object {
+      "Description": "Artifact hash for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3": Object {
+      "Description": "S3 bucket for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14": Object {
+      "Description": "S3 key for asset version \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "LBLGetStateFunctionC6816607": Object {
+      "DependsOn": Array [
+        "LBLGetStateFunctionServiceRoleDefaultPolicy1297C7FC",
+        "LBLGetStateFunctionServiceRole075AA9F2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {},
+        },
+        "Handler": "get-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LBLGetStateFunctionServiceRole075AA9F2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LBLGetStateFunctionServiceRole075AA9F2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LBLGetStateFunctionServiceRoleDefaultPolicy1297C7FC": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:GetThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:undefined:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LBLGetStateFunctionServiceRoleDefaultPolicy1297C7FC",
+        "Roles": Array [
+          Object {
+            "Ref": "LBLGetStateFunctionServiceRole075AA9F2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LBLUpdateStateFunction04B682C4": Object {
+      "DependsOn": Array [
+        "LBLUpdateStateFunctionServiceRoleDefaultPolicy2BA252A8",
+        "LBLUpdateStateFunctionServiceRole330E71F1",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {},
+        },
+        "Handler": "update-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LBLUpdateStateFunctionServiceRole330E71F1",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LBLUpdateStateFunctionServiceRole330E71F1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LBLUpdateStateFunctionServiceRoleDefaultPolicy2BA252A8": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:DescribeThing",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:undefined:*",
+            },
+            Object {
+              "Action": "iot:UpdateThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:undefined:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LBLUpdateStateFunctionServiceRoleDefaultPolicy2BA252A8",
+        "Roles": Array [
+          Object {
+            "Ref": "LBLUpdateStateFunctionServiceRole330E71F1",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

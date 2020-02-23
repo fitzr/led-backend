@@ -1,30 +1,21 @@
-import * as cdk from '@aws-cdk/core'
-import { expect, haveResource, ResourcePart } from '@aws-cdk/assert'
+import { SynthUtils } from '@aws-cdk/assert'
 import { LedBackendApi } from '../../src/lib/led-backend-api'
-import { LedBackendLambda } from '../../src/lib/led-backend-lambda'
 import { initializeForTest } from '../../src/lib/stack-helper'
+import { Stack } from '@aws-cdk/core'
+import { LedBackendLambda } from '../../src/lib/led-backend-lambda'
 
 describe('LedBackendApi', () => {
-  beforeAll(() => {
-    initializeForTest()
+  test('has no diff when env is not dev', () => {
+    initializeForTest('test')
+    const stack = new Stack()
+    new LedBackendApi(stack, 'LBA', new LedBackendLambda(stack, 'TestLambda'))
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot()
   })
 
-  test('has an ApiKey', () => {
-    const stack = new cdk.Stack(
-      new cdk.App({ context: { env: 'test' } }),
-      'test-stack'
-    )
-    new LedBackendApi(
-      stack,
-      'TestApi',
-      new LedBackendLambda(stack, 'TestLambda')
-    )
-    expect(stack).to(
-      haveResource(
-        'AWS::ApiGateway::ApiKey',
-        undefined,
-        ResourcePart.CompleteDefinition
-      )
-    )
+  test('has no diff when env is dev', () => {
+    initializeForTest('dev')
+    const stack = new Stack()
+    new LedBackendApi(stack, 'LBA', new LedBackendLambda(stack, 'TestLambda'))
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot()
   })
 })

@@ -1,18 +1,11 @@
-// import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert'
-// import * as cdk from '@aws-cdk/core'
-// import { LEDBackendStack } from '../../src/lib/led-backend-stack'
+import { SynthUtils } from '@aws-cdk/assert'
+import { Stack } from '@aws-cdk/core'
+import { LedBackendStack } from '../../src/lib/led-backend-stack'
+import { initializeForTest } from '../../src/lib/stack-helper'
 
-test('LedBackendStack', () => {
-  // TODO
-  // const app = new cdk.App()
-  // const stack = new LEDBackendStack(app, 'MyTestStack')
-  // https://docs.aws.amazon.com/cdk/latest/guide/testing.html#testing_getting_started
-  // expectCDK(stack).to(
-  //   matchTemplate(
-  //     {
-  //       Resources: {}
-  //     },
-  //     MatchStyle.EXACT
-  //   )
-  // )
+test('LedBackendStack has no diff', () => {
+  initializeForTest()
+  const stack = new Stack()
+  new LedBackendStack(stack, 'LBS')
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot()
 })

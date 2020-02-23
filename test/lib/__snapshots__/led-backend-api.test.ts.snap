@@ -1,0 +1,1773 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LedBackendApi has no diff when env is dev 1`] = `
+Object {
+  "Outputs": Object {
+    "LBARestApiEndpoint7C86A2C9": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "LBARestApi85E4E00E",
+            },
+            ".execute-api.",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "LBARestApiDeploymentStagedevF5EB519D",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515ArtifactHash320F49D6": Object {
+      "Description": "Artifact hash for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3": Object {
+      "Description": "S3 bucket for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14": Object {
+      "Description": "S3 key for asset version \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "LBAGatewayResponseBadRequestBody69F7A404": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {
+          "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+          "gatewayresponse.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+        },
+        "ResponseType": "BAD_REQUEST_BODY",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "LBAGatewayResponseInvalidApiKeyC4508A69": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {
+          "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+          "gatewayresponse.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+        },
+        "ResponseType": "INVALID_API_KEY",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "LBARestApi85E4E00E": Object {
+      "Properties": Object {
+        "Description": "APIs for LED app.",
+        "Name": "led-backend-api-dev",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "LBARestApiAccount4A720150": Object {
+      "DependsOn": Array [
+        "LBARestApi85E4E00E",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "LBARestApiCloudWatchRole1B76ADE8",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "LBARestApiApiKey751A4E02": Object {
+      "Properties": Object {
+        "Enabled": true,
+        "StageKeys": Array [
+          Object {
+            "RestApiId": Object {
+              "Ref": "LBARestApi85E4E00E",
+            },
+            "StageName": Object {
+              "Ref": "LBARestApiDeploymentStagedevF5EB519D",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::ApiGateway::ApiKey",
+    },
+    "LBARestApiCloudWatchRole1B76ADE8": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LBARestApiDeployment139778DD4e185eec06c15f430f15dce20e445564": Object {
+      "DependsOn": Array [
+        "LBARestApiv1ledsthingname3F8E2E71",
+        "LBARestApiv1ledsthingnamestateGET3C1238A6",
+        "LBARestApiv1ledsthingnamestateOPTIONS3970FB3D",
+        "LBARestApiv1ledsthingnamestatePUT2B8E6C65",
+        "LBARestApiv1ledsthingnamestateF207D7C8",
+        "LBARestApiv1leds3BEF6454",
+        "LBARestApiv1736BC3E3",
+        "LBARestApiUpdateStateValidator42CBFFCF",
+        "LBAUpdateStateModelv11FC616C2",
+      ],
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "LBARestApiDeploymentStagedevF5EB519D": Object {
+      "Properties": Object {
+        "DeploymentId": Object {
+          "Ref": "LBARestApiDeployment139778DD4e185eec06c15f430f15dce20e445564",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+        "StageName": "dev",
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "LBARestApiUpdateStateValidator42CBFFCF": Object {
+      "Properties": Object {
+        "Name": "body-only",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+        "ValidateRequestBody": true,
+      },
+      "Type": "AWS::ApiGateway::RequestValidator",
+    },
+    "LBARestApiUsagePlan4DF26837": Object {
+      "Properties": Object {
+        "ApiStages": Array [
+          Object {
+            "ApiId": Object {
+              "Ref": "LBARestApi85E4E00E",
+            },
+            "Stage": Object {
+              "Ref": "LBARestApiDeploymentStagedevF5EB519D",
+            },
+            "Throttle": Object {},
+          },
+        ],
+        "UsagePlanName": "no-throttle",
+      },
+      "Type": "AWS::ApiGateway::UsagePlan",
+    },
+    "LBARestApiUsagePlanUsagePlanKeyResourceE8561D10": Object {
+      "Properties": Object {
+        "KeyId": Object {
+          "Ref": "LBARestApiApiKey751A4E02",
+        },
+        "KeyType": "API_KEY",
+        "UsagePlanId": Object {
+          "Ref": "LBARestApiUsagePlan4DF26837",
+        },
+      },
+      "Type": "AWS::ApiGateway::UsagePlanKey",
+    },
+    "LBARestApiv1736BC3E3": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "LBARestApi85E4E00E",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "v1",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1leds3BEF6454": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "LBARestApiv1736BC3E3",
+        },
+        "PathPart": "leds",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1ledsthingname3F8E2E71": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "LBARestApiv1leds3BEF6454",
+        },
+        "PathPart": "{thing_name}",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1ledsthingnamestateF207D7C8": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "LBARestApiv1ledsthingname3F8E2E71",
+        },
+        "PathPart": "state",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1ledsthingnamestateGET3C1238A6": Object {
+      "Properties": Object {
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "$input.json(\\"$\\")",
+              },
+              "StatusCode": "200",
+            },
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Requested thing was not found\\"}",
+              },
+              "SelectionPattern": "Thing Not Found",
+              "StatusCode": "404",
+            },
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Internal server error\\"}",
+              },
+              "SelectionPattern": "(
+|.)+",
+              "StatusCode": "500",
+            },
+          ],
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": Object {
+            "application/json": "{\\"thingName\\":\\"$input.params('thing_name')\\"}",
+          },
+          "Type": "AWS",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestLambdaGetStateFunction5FED4116",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "200",
+          },
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "404",
+          },
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "500",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "LBARestApiv1ledsthingnamestateF207D7C8",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "LBARestApiv1ledsthingnamestateGETApiPermissionLBARestApiB37D8A81GETv1ledsthingnamestateB4E21C4A": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaGetStateFunction5FED4116",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/",
+              Object {
+                "Ref": "LBARestApiDeploymentStagedevF5EB519D",
+              },
+              "/GET/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBARestApiv1ledsthingnamestateGETApiPermissionTestLBARestApiB37D8A81GETv1ledsthingnamestateDE449A2A": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaGetStateFunction5FED4116",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/test-invoke-stage/GET/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBARestApiv1ledsthingnamestateOPTIONS3970FB3D": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": Object {
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,PUT,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": Object {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "LBARestApiv1ledsthingnamestateF207D7C8",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "LBARestApiv1ledsthingnamestatePUT2B8E6C65": Object {
+      "Properties": Object {
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "PUT",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "$input.json(\\"$\\")",
+              },
+              "StatusCode": "202",
+            },
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Requested thing was not found\\"}",
+              },
+              "SelectionPattern": "Thing Not Found",
+              "StatusCode": "404",
+            },
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Internal server error\\"}",
+              },
+              "SelectionPattern": "(
+|.)+",
+              "StatusCode": "500",
+            },
+          ],
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": Object {
+            "application/json": "{\\"state\\": $input.json(\\"$\\"),\\"thingName\\":\\"$input.params('thing_name')\\"}",
+          },
+          "Type": "AWS",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestLambdaUpdateStateFunction192D5C12",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "202",
+          },
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "404",
+          },
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "500",
+          },
+        ],
+        "RequestModels": Object {
+          "application/json": Object {
+            "Ref": "LBAUpdateStateModelv11FC616C2",
+          },
+        },
+        "RequestValidatorId": Object {
+          "Ref": "LBARestApiUpdateStateValidator42CBFFCF",
+        },
+        "ResourceId": Object {
+          "Ref": "LBARestApiv1ledsthingnamestateF207D7C8",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "LBARestApiv1ledsthingnamestatePUTApiPermissionLBARestApiB37D8A81PUTv1ledsthingnamestate9D901038": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaUpdateStateFunction192D5C12",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/",
+              Object {
+                "Ref": "LBARestApiDeploymentStagedevF5EB519D",
+              },
+              "/PUT/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBARestApiv1ledsthingnamestatePUTApiPermissionTestLBARestApiB37D8A81PUTv1ledsthingnamestateF194C6C9": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaUpdateStateFunction192D5C12",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/test-invoke-stage/PUT/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBAUpdateStateModelv11FC616C2": Object {
+      "Properties": Object {
+        "ContentType": "application/json",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+        "Schema": Object {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": false,
+          "description": "Validation schema for update state API.",
+          "properties": Object {
+            "brightness": Object {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number",
+            },
+            "color": Object {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string",
+            },
+            "power": Object {
+              "pattern": "^(on|off)$",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+      },
+      "Type": "AWS::ApiGateway::Model",
+    },
+    "TestLambdaGetStateFunction5FED4116": Object {
+      "DependsOn": Array [
+        "TestLambdaGetStateFunctionServiceRoleDefaultPolicy22851E9C",
+        "TestLambdaGetStateFunctionServiceRoleC66F76BD",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "endpoint": "example.com",
+            "region": "ap-northeast-1",
+          },
+        },
+        "Handler": "get-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaGetStateFunctionServiceRoleC66F76BD",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "TestLambdaGetStateFunctionServiceRoleC66F76BD": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TestLambdaGetStateFunctionServiceRoleDefaultPolicy22851E9C": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:GetThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:ap-northeast-1:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "TestLambdaGetStateFunctionServiceRoleDefaultPolicy22851E9C",
+        "Roles": Array [
+          Object {
+            "Ref": "TestLambdaGetStateFunctionServiceRoleC66F76BD",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "TestLambdaUpdateStateFunction192D5C12": Object {
+      "DependsOn": Array [
+        "TestLambdaUpdateStateFunctionServiceRoleDefaultPolicy735E2A2C",
+        "TestLambdaUpdateStateFunctionServiceRoleA2E58156",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "endpoint": "example.com",
+            "region": "ap-northeast-1",
+          },
+        },
+        "Handler": "update-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaUpdateStateFunctionServiceRoleA2E58156",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "TestLambdaUpdateStateFunctionServiceRoleA2E58156": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TestLambdaUpdateStateFunctionServiceRoleDefaultPolicy735E2A2C": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:DescribeThing",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:ap-northeast-1:*",
+            },
+            Object {
+              "Action": "iot:UpdateThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:ap-northeast-1:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "TestLambdaUpdateStateFunctionServiceRoleDefaultPolicy735E2A2C",
+        "Roles": Array [
+          Object {
+            "Ref": "TestLambdaUpdateStateFunctionServiceRoleA2E58156",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;
+
+exports[`LedBackendApi has no diff when env is not dev 1`] = `
+Object {
+  "Outputs": Object {
+    "LBARestApiEndpoint7C86A2C9": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "LBARestApi85E4E00E",
+            },
+            ".execute-api.",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "LBARestApiDeploymentStagetest4C0B5E9E",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515ArtifactHash320F49D6": Object {
+      "Description": "Artifact hash for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3": Object {
+      "Description": "S3 bucket for asset \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+    "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14": Object {
+      "Description": "S3 key for asset version \\"b06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "LBARestApi85E4E00E": Object {
+      "Properties": Object {
+        "Description": "APIs for LED app.",
+        "Name": "led-backend-api-test",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "LBARestApiAccount4A720150": Object {
+      "DependsOn": Array [
+        "LBARestApi85E4E00E",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "LBARestApiCloudWatchRole1B76ADE8",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "LBARestApiApiKey751A4E02": Object {
+      "Properties": Object {
+        "Enabled": true,
+        "StageKeys": Array [
+          Object {
+            "RestApiId": Object {
+              "Ref": "LBARestApi85E4E00E",
+            },
+            "StageName": Object {
+              "Ref": "LBARestApiDeploymentStagetest4C0B5E9E",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::ApiGateway::ApiKey",
+    },
+    "LBARestApiCloudWatchRole1B76ADE8": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LBARestApiDeployment139778DD040a674b146c28b147d4cd40ce6a811e": Object {
+      "DependsOn": Array [
+        "LBARestApiv1ledsthingname3F8E2E71",
+        "LBARestApiv1ledsthingnamestateGET3C1238A6",
+        "LBARestApiv1ledsthingnamestatePUT2B8E6C65",
+        "LBARestApiv1ledsthingnamestateF207D7C8",
+        "LBARestApiv1leds3BEF6454",
+        "LBARestApiv1736BC3E3",
+        "LBARestApiUpdateStateValidator42CBFFCF",
+        "LBAUpdateStateModelv11FC616C2",
+      ],
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "LBARestApiDeploymentStagetest4C0B5E9E": Object {
+      "Properties": Object {
+        "DeploymentId": Object {
+          "Ref": "LBARestApiDeployment139778DD040a674b146c28b147d4cd40ce6a811e",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+        "StageName": "test",
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "LBARestApiUpdateStateValidator42CBFFCF": Object {
+      "Properties": Object {
+        "Name": "body-only",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+        "ValidateRequestBody": true,
+      },
+      "Type": "AWS::ApiGateway::RequestValidator",
+    },
+    "LBARestApiUsagePlan4DF26837": Object {
+      "Properties": Object {
+        "ApiStages": Array [
+          Object {
+            "ApiId": Object {
+              "Ref": "LBARestApi85E4E00E",
+            },
+            "Stage": Object {
+              "Ref": "LBARestApiDeploymentStagetest4C0B5E9E",
+            },
+            "Throttle": Object {},
+          },
+        ],
+        "UsagePlanName": "no-throttle",
+      },
+      "Type": "AWS::ApiGateway::UsagePlan",
+    },
+    "LBARestApiUsagePlanUsagePlanKeyResourceE8561D10": Object {
+      "Properties": Object {
+        "KeyId": Object {
+          "Ref": "LBARestApiApiKey751A4E02",
+        },
+        "KeyType": "API_KEY",
+        "UsagePlanId": Object {
+          "Ref": "LBARestApiUsagePlan4DF26837",
+        },
+      },
+      "Type": "AWS::ApiGateway::UsagePlanKey",
+    },
+    "LBARestApiv1736BC3E3": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "LBARestApi85E4E00E",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "v1",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1leds3BEF6454": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "LBARestApiv1736BC3E3",
+        },
+        "PathPart": "leds",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1ledsthingname3F8E2E71": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "LBARestApiv1leds3BEF6454",
+        },
+        "PathPart": "{thing_name}",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1ledsthingnamestateF207D7C8": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "LBARestApiv1ledsthingname3F8E2E71",
+        },
+        "PathPart": "state",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "LBARestApiv1ledsthingnamestateGET3C1238A6": Object {
+      "Properties": Object {
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseTemplates": Object {
+                "application/json": "$input.json(\\"$\\")",
+              },
+              "StatusCode": "200",
+            },
+            Object {
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Requested thing was not found\\"}",
+              },
+              "SelectionPattern": "Thing Not Found",
+              "StatusCode": "404",
+            },
+            Object {
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Internal server error\\"}",
+              },
+              "SelectionPattern": "(
+|.)+",
+              "StatusCode": "500",
+            },
+          ],
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": Object {
+            "application/json": "{\\"thingName\\":\\"$input.params('thing_name')\\"}",
+          },
+          "Type": "AWS",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestLambdaGetStateFunction5FED4116",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "MethodResponses": Array [
+          Object {
+            "StatusCode": "200",
+          },
+          Object {
+            "StatusCode": "404",
+          },
+          Object {
+            "StatusCode": "500",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "LBARestApiv1ledsthingnamestateF207D7C8",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "LBARestApiv1ledsthingnamestateGETApiPermissionLBARestApiB37D8A81GETv1ledsthingnamestateB4E21C4A": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaGetStateFunction5FED4116",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/",
+              Object {
+                "Ref": "LBARestApiDeploymentStagetest4C0B5E9E",
+              },
+              "/GET/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBARestApiv1ledsthingnamestateGETApiPermissionTestLBARestApiB37D8A81GETv1ledsthingnamestateDE449A2A": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaGetStateFunction5FED4116",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/test-invoke-stage/GET/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBARestApiv1ledsthingnamestatePUT2B8E6C65": Object {
+      "Properties": Object {
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "PUT",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseTemplates": Object {
+                "application/json": "$input.json(\\"$\\")",
+              },
+              "StatusCode": "202",
+            },
+            Object {
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Requested thing was not found\\"}",
+              },
+              "SelectionPattern": "Thing Not Found",
+              "StatusCode": "404",
+            },
+            Object {
+              "ResponseTemplates": Object {
+                "application/json": "{\\"message\\":\\"Internal server error\\"}",
+              },
+              "SelectionPattern": "(
+|.)+",
+              "StatusCode": "500",
+            },
+          ],
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": Object {
+            "application/json": "{\\"state\\": $input.json(\\"$\\"),\\"thingName\\":\\"$input.params('thing_name')\\"}",
+          },
+          "Type": "AWS",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestLambdaUpdateStateFunction192D5C12",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "MethodResponses": Array [
+          Object {
+            "StatusCode": "202",
+          },
+          Object {
+            "StatusCode": "404",
+          },
+          Object {
+            "StatusCode": "500",
+          },
+        ],
+        "RequestModels": Object {
+          "application/json": Object {
+            "Ref": "LBAUpdateStateModelv11FC616C2",
+          },
+        },
+        "RequestValidatorId": Object {
+          "Ref": "LBARestApiUpdateStateValidator42CBFFCF",
+        },
+        "ResourceId": Object {
+          "Ref": "LBARestApiv1ledsthingnamestateF207D7C8",
+        },
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "LBARestApiv1ledsthingnamestatePUTApiPermissionLBARestApiB37D8A81PUTv1ledsthingnamestate9D901038": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaUpdateStateFunction192D5C12",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/",
+              Object {
+                "Ref": "LBARestApiDeploymentStagetest4C0B5E9E",
+              },
+              "/PUT/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBARestApiv1ledsthingnamestatePUTApiPermissionTestLBARestApiB37D8A81PUTv1ledsthingnamestateF194C6C9": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaUpdateStateFunction192D5C12",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "LBARestApi85E4E00E",
+              },
+              "/test-invoke-stage/PUT/v1/leds/{thing_name}/state",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LBAUpdateStateModelv11FC616C2": Object {
+      "Properties": Object {
+        "ContentType": "application/json",
+        "RestApiId": Object {
+          "Ref": "LBARestApi85E4E00E",
+        },
+        "Schema": Object {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": false,
+          "description": "Validation schema for update state API.",
+          "properties": Object {
+            "brightness": Object {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number",
+            },
+            "color": Object {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string",
+            },
+            "power": Object {
+              "pattern": "^(on|off)$",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+      },
+      "Type": "AWS::ApiGateway::Model",
+    },
+    "TestLambdaGetStateFunction5FED4116": Object {
+      "DependsOn": Array [
+        "TestLambdaGetStateFunctionServiceRoleDefaultPolicy22851E9C",
+        "TestLambdaGetStateFunctionServiceRoleC66F76BD",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "endpoint": "example.com",
+            "region": "ap-northeast-1",
+          },
+        },
+        "Handler": "get-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaGetStateFunctionServiceRoleC66F76BD",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "TestLambdaGetStateFunctionServiceRoleC66F76BD": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TestLambdaGetStateFunctionServiceRoleDefaultPolicy22851E9C": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:GetThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:ap-northeast-1:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "TestLambdaGetStateFunctionServiceRoleDefaultPolicy22851E9C",
+        "Roles": Array [
+          Object {
+            "Ref": "TestLambdaGetStateFunctionServiceRoleC66F76BD",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "TestLambdaUpdateStateFunction192D5C12": Object {
+      "DependsOn": Array [
+        "TestLambdaUpdateStateFunctionServiceRoleDefaultPolicy735E2A2C",
+        "TestLambdaUpdateStateFunctionServiceRoleA2E58156",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3Bucket1FA3DBC3",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb06a10e6f1cf946435d7b642f638896922c63cdebde34ab812dcee263d247515S3VersionKeyDFE9DD14",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "endpoint": "example.com",
+            "region": "ap-northeast-1",
+          },
+        },
+        "Handler": "update-state.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "TestLambdaUpdateStateFunctionServiceRoleA2E58156",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "TestLambdaUpdateStateFunctionServiceRoleA2E58156": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TestLambdaUpdateStateFunctionServiceRoleDefaultPolicy735E2A2C": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "iot:DescribeThing",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:ap-northeast-1:*",
+            },
+            Object {
+              "Action": "iot:UpdateThingShadow",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iot:ap-northeast-1:*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "TestLambdaUpdateStateFunctionServiceRoleDefaultPolicy735E2A2C",
+        "Roles": Array [
+          Object {
+            "Ref": "TestLambdaUpdateStateFunctionServiceRoleA2E58156",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

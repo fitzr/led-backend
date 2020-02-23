@@ -47,6 +47,6 @@ export const initialize = async (scope: cdk.Construct): Promise<void> => {
 }
 
 // For test use only.
-export const initializeForTest = (): void => {
-  helper = new StackHelper('test', 'ap-northeast-1', 'example.com')
+export const initializeForTest = (env?: string): void => {
+  helper = new StackHelper(env || 'test', 'ap-northeast-1', 'example.com')
 }
