@@ -1,7 +1,7 @@
 #!/bin/bash
 
 END_POINT=$(<.tmp/endpoint.txt)
-mosquitto_pub --cafile root.crt \
+mosquitto_sub --cafile root.crt \
               --cert deviceCertAndCACert.crt \
               --key deviceCert.key \
               -h $END_POINT \
@@ -9,7 +9,5 @@ mosquitto_pub --cafile root.crt \
               -q 1 \
               -i FITZR0001 \
               --tls-version tlsv1.2 \
-              -t '$aws/things/FITZR0001/shadow/update' \
-              -m '{"state":{"reported":{"connection":"active"}}}' \
+              -t '$aws/things/FITZR0001/shadow/update/delta' \
               -d
-
