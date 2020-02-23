@@ -1,7 +1,7 @@
 {
   "name": "led-backend",
   "version": "0.1.0",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bin": {
     "led-backend": "src/bin/led-backend.js"
   },
