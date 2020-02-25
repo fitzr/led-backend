@@ -1,0 +1,141 @@
+---
+  openapi: "3.0.1"
+  info: 
+    title: "LED API リファレンス"
+    version: "v0.1"
+    description: "このAPIを用い、スマートフォンからLEDの状態を取得および更新することが可能です。<br>
+                  ベースURL及びAPI KEYは別途ご連絡します。"
+  tags:
+    - name: headers
+      description: "すべてのリクエストのヘッダーには以下を含める必要があります。<br><br>
+                    ・x-api-key: [API KEY]<br>
+                    ・content-type: application/json"
+  servers: 
+    - 
+      url: "https://xxxxxx.execute-api.ap-northeast-1.amazonaws.com/{basePath}"
+      variables: 
+        basePath: 
+          default: "dev"
+  paths: 
+    /v1/leds/{thing_name}/state:
+      get:
+        description: "LEDの状態を取得します。<br><br>
+                      電源が入っていないなどの理由により、デバイスがネットワークに繋がっていない場合は connection inactive が返却されます。<br>
+                      ただし、電源切断後数分間は、切断状態が反映されない期間が存在します。"
+        parameters:
+          -
+            in: path
+            name: thing_name
+            description: "デバイスを一意に識別するID"
+            required: true
+            schema:
+              type: string
+        responses: 
+          200: 
+            description: "取得成功"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/LEDState"
+          404: 
+            description: "IDに一致するデバイスが見つからない"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorResponse"
+        security: 
+          - 
+            api_key: []
+      put:
+        description: "LEDの状態を更新します。<br><br>
+                      このAPIの成功はあくまで更新受付の成功であり、実際にデバイスに反映されたということを意味しません。<br>
+                      レスポンスはリクエストした内容がそのまま返却されます。<br>
+                      デバイスの状態は、状態取得APIで取得可能です。"
+        parameters:
+          -
+            in: path
+            name: thing_name
+            description: "デバイスを一意に識別するID"
+            required: true
+            schema:
+              type: string
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/UpdateLEDStateRequest"
+          required: true
+        responses: 
+          202: 
+            description: "更新受付成功"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/UpdateLEDStateRequest"
+          400: 
+            description: "リスエストされたLEDの状態が不正"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorResponse"
+          404: 
+            description: "IDに一致するデバイスが見つからない"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorResponse"
+        security: 
+          - 
+            api_key: []
+  components:
+    schemas: 
+      LEDState:
+        title: LED状態
+        description: LED状態の例、デバイスやアプリの要件により変更可能です
+        allOf:
+          - $ref: "#/components/schemas/UpdateLEDStateRequest"
+          - type: object
+            required:
+              - connection
+            properties: 
+              connection:
+                pattern: ^(active|inactive)$
+                type: string
+                description: デバイスに電源が入ってネットワークに接続しているかどうか
+      UpdateLEDStateRequest:
+        title: LED状態更新リクエスト
+        description: LED状態の例、デバイスやアプリの要件により変更可能です
+        type: object
+        properties: 
+          power: 
+            pattern: ^(on|off)$
+            type: string
+            description: ライトのON/OFF
+          brightness: 
+            maximum: 100
+            minimum: 0
+            type: number
+            description: ライトの明るさ
+          color: 
+            maxLength: 30
+            minLength: 1
+            type: string
+            description: ライトの色
+        additionalProperties: false
+      ErrorResponse:
+        title: エラーレスポンス
+        description: エラー発生時のレスポンス
+        type: object
+        required:
+          - message
+        properties:
+          message:
+            type: string
+            description: エラーメッセージ
+          
+    securitySchemes: 
+      api_key: 
+        type: apiKey
+        name: x-api-key
+        in: header
+        description: "リクエストのヘッダーにAPIキーを含める必要があります。"
