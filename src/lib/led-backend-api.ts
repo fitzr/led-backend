@@ -35,7 +35,7 @@ export class LedBackendApi extends cdk.Construct {
       description: 'APIs for LED app.',
       deployOptions: {
         stageName: helper.env,
-        metricsEnabled: true,
+        metricsEnabled: true
       }
     }
     const api = new apigw.RestApi(this, 'RestApi', props)

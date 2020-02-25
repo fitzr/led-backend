@@ -1,0 +1,8 @@
+{
+  "globals": {
+    "API_ROOT": "https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/dev/v1",
+    "API_KEY": "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "THING_NAME": "TestThing",
+    "ERROR_THING_NAME": "NotExistsThing"
+  }
+}
