@@ -20,13 +20,13 @@ class Mqtt:
         self.__client.publish(topic=topic, payload=payload)
 
     def set_on_connect(self, cb):
-        self.__client.on_connect = cb
+        self.__client.on_connect = lambda client, userdata, flag, rc: cb(rc)
 
     def set_on_disconnect(self, cb):
-        self.__client.on_disconnect = cb
+        self.__client.on_disconnect = lambda client, userdata, flag, rc: cb(rc)
 
     def set_on_message(self, cb):
-        self.__client.on_message = cb
+        self.__client.on_message = lambda client, userdata, msg: cb(msg)
 
     def set_on_publish(self, cb):
-        self.__client.on_publish = cb
+        self.__client.on_publish = lambda client, userdata, mid: cb(mid)

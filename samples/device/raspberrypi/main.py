@@ -20,23 +20,23 @@ mqtt = mq.Mqtt(**default_config)
 led = led.Led()
 
 
-def on_connect(client, userdata, flag, rc):
+def on_connect(rc):
     print('connected rc:{}'.format(rc))
     mqtt.subscribe(DELTA_TOPIC)
     report_state()
 
 
-def on_disconnect(client, userdata, flag, rc):
+def on_disconnect(rc):
     print('disconnected rc:{}'.format(rc))
     sys.exit()
 
 
-def on_message(client, userdata, msg):
+def on_message(msg):
     print('received msg:{}'.format(msg.payload))
     update_state(msg.payload)
 
 
-def on_publish(client, userdata, mid):
+def on_publish(mid):
     print('publish mid:{}'.format(mid))
 
 
