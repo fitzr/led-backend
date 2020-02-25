@@ -2,11 +2,10 @@
 
 A serverless backend for LED lighting devices.
 
-## Useful commands
+## Documents
 
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+- [API Reference](https://rawgit.com/fitzr/led-backend/master/documents/api/index.html) for app
+- MQTT Reference for device (TODO)
+
+## Sample
+- [Client App](https://rawgit.com/fitzr/led-backend/master/samples/app/index.html)
