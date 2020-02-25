@@ -166,6 +166,13 @@ Object {
         "DeploymentId": Object {
           "Ref": "LBARestApiDeployment139778DD4e185eec06c15f430f15dce20e445564",
         },
+        "MethodSettings": Array [
+          Object {
+            "HttpMethod": "*",
+            "MetricsEnabled": true,
+            "ResourcePath": "/*",
+          },
+        ],
         "RestApiId": Object {
           "Ref": "LBARestApi85E4E00E",
         },
@@ -1087,6 +1094,13 @@ Object {
         "DeploymentId": Object {
           "Ref": "LBARestApiDeployment139778DD040a674b146c28b147d4cd40ce6a811e",
         },
+        "MethodSettings": Array [
+          Object {
+            "HttpMethod": "*",
+            "MetricsEnabled": true,
+            "ResourcePath": "/*",
+          },
+        ],
         "RestApiId": Object {
           "Ref": "LBARestApi85E4E00E",
         },
