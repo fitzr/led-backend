@@ -1,13 +1,22 @@
 import time
 import sys
 import json
+import configparser
 from led import mqtt as mq, state, led
 
-UPDATE_TOPIC = '$aws/things/TestThing/shadow/update'
-DELTA_TOPIC = '$aws/things/TestThing/shadow/update/delta'
+CNF_INI = 'config.ini'
+
+config = configparser.ConfigParser()
+config.read(CNF_INI, encoding='utf-8')
+default_config = config['DEFAULT']
+
+thing_name = default_config['thing_name']
+
+UPDATE_TOPIC = '$aws/things/{}/shadow/update'.format(thing_name)
+DELTA_TOPIC = '$aws/things/{}/shadow/update/delta'.format(thing_name)
 
 state = state.State()
-mqtt = mq.Mqtt()
+mqtt = mq.Mqtt(**default_config)
 led = led.Led()
 
 

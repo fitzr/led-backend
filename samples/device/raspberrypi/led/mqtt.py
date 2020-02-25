@@ -1,24 +1,16 @@
 import paho.mqtt.client as mqtt
 
-CLIENT_ID = 'TestThing'
-CA = '.tmp/test-root-CA.crt'
-CERT = '.tmp/test-thing-certificate.pem.crt'
-PRIVATE = '.tmp/test-thing-private.pem.key'
 PORT = 8883
 
 
-def endpoint():
-    with open('.tmp/endpoint.txt', 'r') as f:
-        return f.read().splitlines()[0]
-
-
 class Mqtt:
-    def __init__(self):
-        self.__client = mqtt.Client(client_id=CLIENT_ID)
-        self.__client.tls_set(ca_certs=CA, certfile=CERT, keyfile=PRIVATE)
+    def __init__(self, endpoint, ca_file, cert_file, key_file, thing_name):
+        self.__client = mqtt.Client(client_id=thing_name)
+        self.__client.tls_set(ca_certs=ca_file, certfile=cert_file, keyfile=key_file)
+        self.__endpoint = endpoint
 
     def connect(self):
-        self.__client.connect(endpoint(), PORT)
+        self.__client.connect(self.__endpoint, PORT)
         self.__client.loop_start()
 
     def subscribe(self, topic):

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-END_POINT=$(<.tmp/endpoint.txt)
+END_POINT=`aws iot describe-endpoint --output text`
 mosquitto_sub --cafile root.crt \
               --cert deviceCertAndCACert.crt \
               --key deviceCert.key \
