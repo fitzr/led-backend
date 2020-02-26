@@ -38,8 +38,7 @@ MQTT使用時、以下をパラメータに設定してください。
 ### デバイス状態スキーマ
 デバイス状態の例として、以下のような内容が考えられます。
 connection 以外の内容については、デバイスやアプリの要件により変更可能です。
-```
-javascript
+```javascript
 {
   "state":{
     "connection": "active", // デバイスの通信状態 値は常に "active"
@@ -60,8 +59,7 @@ $aws/things/{device_id}/shadow/update/delta
 ```
 
 受信するメッセージは以下のような内容となります。(整形してますが、改行空白はありません。)
-```
-javascript
+```javascript
 {
   "version": 1234,
   "timestamp": 1582694282,
