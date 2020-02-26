@@ -3,7 +3,9 @@
   info: 
     title: "LED API リファレンス"
     version: "v0.1"
-    description: "このAPIを用い、スマートフォンからLEDの状態を取得および更新することが可能です。<br>
+    description: "以下のAPIを用い、スマートフォンからLEDデバイスの状態を取得および更新することが可能です。<br>
+                  <h4>* LEDの状態を取得する GET API</h4>
+                  <h4>* LEDへ状態の更新をリクエストする PUT API</h4>
                   ベースURL及びAPI KEYは別途ご連絡します。"
   tags:
     - name: headers
@@ -17,15 +19,17 @@
         basePath: 
           default: "dev"
   paths: 
-    /v1/leds/{thing_name}/state:
+    /v1/leds/{device_id}/state:
       get:
         description: "LEDの状態を取得します。<br><br>
+                      指定されたデバイスIDに該当するデバイスが見つからない場合は 404 Not Found が返却されます。<br>
+                      正しいデバイスIDであっても、そのデバイスが一度もネットワークにつながったことがない状態の場合は、サーバーはそのデバイスの存在を認識していないため、Not Found になります。<br>
                       電源が入っていないなどの理由により、デバイスがネットワークに繋がっていない場合は connection inactive が返却されます。<br>
                       ただし、電源切断後数分間は、切断状態が反映されない期間が存在します。"
         parameters:
           -
             in: path
-            name: thing_name
+            name: device_id
             description: "デバイスを一意に識別するID"
             required: true
             schema:
@@ -54,7 +58,7 @@
         parameters:
           -
             in: path
-            name: thing_name
+            name: device_id
             description: "デバイスを一意に識別するID"
             required: true
             schema:
@@ -91,7 +95,7 @@
     schemas: 
       LEDState:
         title: LED状態
-        description: LED状態の例、デバイスやアプリの要件により変更可能です
+        description: "LED状態の例、デバイスやアプリの要件により変更可能です"
         allOf:
           - $ref: "#/components/schemas/UpdateLEDStateRequest"
           - type: object
@@ -101,10 +105,10 @@
               connection:
                 pattern: ^(active|inactive)$
                 type: string
-                description: デバイスに電源が入ってネットワークに接続しているかどうか
+                description: "デバイスに電源が入ってネットワークに接続しているかどうか"
       UpdateLEDStateRequest:
         title: LED状態更新リクエスト
-        description: LED状態の例、デバイスやアプリの要件により変更可能です
+        description: "LED状態の例、デバイスやアプリの要件により変更可能です"
         type: object
         properties: 
           power: 

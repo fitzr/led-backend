@@ -1,7 +1,3 @@
-# led-backend
-
-A serverless backend for LED lighting devices.
-
 ## Documents
 
 #### Interface References
