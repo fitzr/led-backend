@@ -95,7 +95,7 @@
     schemas: 
       LEDState:
         title: LED状態
-        description: "LED状態の例、デバイスやアプリの要件により変更可能です"
+        description: "LED状態の例、connection 以外の状態については、アプリやデバイスの要件により変更可能です"
         allOf:
           - $ref: "#/components/schemas/UpdateLEDStateRequest"
           - type: object
@@ -108,13 +108,13 @@
                 description: "デバイスに電源が入ってネットワークに接続しているかどうか"
       UpdateLEDStateRequest:
         title: LED状態更新リクエスト
-        description: "LED状態の例、デバイスやアプリの要件により変更可能です"
+        description: "LED状態の例、アプリやデバイスの要件により変更可能です"
         type: object
         properties: 
           power: 
             pattern: ^(on|off)$
             type: string
-            description: ライトのON/OFF
+            description: ライトの点灯状態
           brightness: 
             maximum: 100
             minimum: 0

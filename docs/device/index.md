@@ -32,15 +32,20 @@ MQTT使用時、以下をパラメータに設定してください。
 
 ### サーバーへのデバイス登録
 デバイスは初回通信時にサーバーに自動登録されます。  
-ただし、初回に mosquitto_pub コマンドを実行すると、登録処理が間に合わずトピックの発行がエラーになるということが起こりえます。  
+ただし、初回に publish を実行すると、登録処理が間に合わずトピックの発行がエラーになるということが起こりえます。  
 初回は、connect または、subscribe を先に行ってください。   
 
 ### デバイス状態スキーマ
-
-```javascript
+デバイス状態の例として、以下のような内容が考えられます。
+connection 以外の内容については、デバイスやアプリの要件により変更可能です。
+```
+javascript
 {
   "state":{
-    "color":"green"
+    "connection": "active", // デバイスの通信状態 値は常に "active"
+    "power": "on", // ライトの点灯状態 "on" or "off"
+    "brightness": 80, // ライトの明るさ 0 ~ 100
+    "color": "green" // ライトの色 1 ~ 30 文字の文字列
   }
 }
 ```
@@ -48,20 +53,20 @@ MQTT使用時、以下をパラメータに設定してください。
 
 ## 通信内容
 
-### 状態変更リクエスト受付 
+### subscribe 状態変更リクエスト受付 
 以下のトピックを subscribe することで、状態変更リクエストを受信します。
-
 ```
 $aws/things/{device_id}/shadow/update/delta
 ```
 
-受信するメッセージは以下のような内容となります。(可視性を考慮し整形してますが、改行空白はありません。)
-```javascript
+受信するメッセージは以下のような内容となります。(整形してますが、改行空白はありません。)
+```
+javascript
 {
-  "version":1234,
-  "timestamp":1582694282,
+  "version": 1234,
+  "timestamp": 1582694282,
   "state":{
-    "color":"green"
+    "color": "green"
   },
   "metadata":{
     "color":{
@@ -71,24 +76,32 @@ $aws/things/{device_id}/shadow/update/delta
 }
 ```
 
-### 現在の状態を通知
-以下のトピックを publish することで、現在の状態をサーバーに通知します。
+state の値をデバイスに反映した後、publish を行い、サーバーに更新した状態を通知してください。
+state のとり得る値は、[デバイス状態スキーマ](#デバイス状態スキーマ)から connection を除いたものとなります。
 
+### publish 現在の状態を通知
+以下のトピックを publish することで、現在の状態をサーバーに通知します。
 ```
 $aws/things/{device_id}/shadow/update
 ```
 
-
-送信するメッセージは以下のような内容となります。(可視性を考慮し整形してますが、改行空白は不要です。)
-```javascript
+送信するメッセージは[デバイス状態スキーマ](#デバイス状態スキーマ)の内容となります。(整形不要)
+```
+javascript
 {
   "state":{
-    "color":"green"
+    "connection": "active",
+    "power": "on",
+    "brightness": 80,
+    "color": "green"
   }
 }
 ```
 
-
+以下のタイミングで送信を行ってください。
+* デバイス起動時
+* 状態変更リクエスト受信時
+* 一分ごとなど定期的な間隔で送信 (スマートフォンアプリからデバイスの電源が入っていることを確認するために使用します。間隔は別途相談。)
 
 ## その他
 ### 通信について
@@ -98,12 +111,3 @@ $aws/things/{device_id}/shadow/update
 ### MQTTトピックについて
 上記、MQTTトピックは [デバイスシャドウのMQTTトピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-delta-pub-sub-topic) に基づいています。  
 デバイスからは、[delta トピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-delta-pub-sub-topic) によるリクエスト受付および [update トピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-pub-sub-topic)による状態通知を行う形となります。
-
-
-
-
-
-
-
-
-
