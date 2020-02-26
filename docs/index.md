@@ -1,8 +1,8 @@
 ## Documents
 
 #### Interface References
-- [API Reference](https://fitzr.github.io/led-backend/app/) for applications
-- [MQTT Reference](https://fitzr.github.io/led-backend/device/) for device
+- [Application API Reference](https://fitzr.github.io/led-backend/app/)
+- [Device API Reference](https://fitzr.github.io/led-backend/device/)
 
 #### Sample
-- [Client App](https://fitzr.github.io/led-backend/client-demo/)
+- [Client Application](https://fitzr.github.io/led-backend/client-demo/)
