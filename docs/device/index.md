@@ -4,6 +4,8 @@
 * スマートフォンからの状態変更リクエストを受け付けるための subscribe
 * LEDデバイスの現在の状態をサーバーに通知するための publish
 
+<br>
+
 ## 前提
 
 ### 証明書の発行
@@ -49,10 +51,11 @@ connection 以外の内容については、デバイスやアプリの要件に
 }
 ```
 
+<br>
 
 ## 通信内容
 
-### subscribe 状態変更リクエスト受付 
+### subscribe (状態変更リクエスト受付) 
 以下のトピックを subscribe することで、状態変更リクエストを受信します。
 ```
 $aws/things/{device_id}/shadow/update/delta
@@ -77,7 +80,7 @@ $aws/things/{device_id}/shadow/update/delta
 state の値をデバイスに反映した後、publish を行い、サーバーに更新した状態を通知してください。
 state のとり得る値は、[デバイス状態スキーマ](#デバイス状態スキーマ)から connection を除いたものとなります。
 
-### publish 現在の状態を通知
+### publish (現在の状態を通知)
 以下のトピックを publish することで、現在の状態をサーバーに通知します。
 ```
 $aws/things/{device_id}/shadow/update
@@ -101,7 +104,10 @@ javascript
 * 状態変更リクエスト受信時
 * 一分ごとなど定期的な間隔で送信 (スマートフォンアプリからデバイスの電源が入っていることを確認するために使用します。間隔は別途相談。)
 
+<br>
+
 ## その他
+
 ### 通信について
 上記、デバイスとバックエンドの接続は、AWS IoT を用いて実現しています。  
 そのため、必要に応じ、デバイス側で [AWS IoT SDK](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/iot-sdks.html) などのAWSが提供するツールを使用することが可能です。
