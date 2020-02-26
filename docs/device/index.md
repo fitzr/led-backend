@@ -1,8 +1,8 @@
 # LED デバイス通信 MQTT インターフェースリファレンス
 
 以下のMQTTを使用した通信により、LEDデバイスとサーバーの連携を実現します。
-* スマートフォンからの状態変更リクエストを受け付けるための subscribe
-* LEDデバイスの現在の状態をサーバーに通知するための publish
+* スマートフォンからの状態変更リクエストを受け付けるための [subscribe](#subscribe-状態変更リクエスト受付)
+* LEDデバイスの現在の状態をサーバーに通知するための [publish](#publish-現在の状態を通知)
 
 <br>
 
@@ -11,19 +11,21 @@
 ### 証明書の発行
 以下記載の、デバイスを一意に識別するID (以下「デバイスID」) および、デバイスIDに紐づく証明書をデバイスごとに発行します。  
 デバイスは、予めこれらを組込んだ状態である必要があります。  
-スマートフォンアプリ側は、操作時にこのデバイスIDを知っている必要があります。
+スマートフォンアプリは、操作時にこのデバイスIDを知っている必要があります。
 
-| 名前 | 説明 | 形式 | 備考 |
+| name | description | format | remarks |
 ----|----|----|----
 | device_id | デバイスID | 文字列 |
 | ca.crt | 認証局証明書 | ファイル | 全デバイス共通 |
 | device.crt | デバイス証明書 | ファイル |
 | device.key | デバイス秘密鍵 | ファイル |
 
+<br>
+
 ### MQTT コネクションパラメータ
 MQTT使用時、以下をパラメータに設定してください。
 
-| 名前 | 説明 | 備考 |
+| name | description | remarks |
 ----|----|----
 | host | MQTT host | 別途ご連絡します |
 | port | MQTT port | 8883 |
@@ -32,13 +34,17 @@ MQTT使用時、以下をパラメータに設定してください。
 | cert | デバイス証明書 | 上記 device.crt |
 | key | デバイス秘密鍵 | 上記 device.key |
 
+<br>
+
 ### サーバーへのデバイス登録
 デバイスは初回通信時にサーバーに自動登録されます。  
 ただし、初回に publish を実行すると、登録処理が間に合わずトピックの発行がエラーになるということが起こりえます。  
 初回は、connect または、subscribe を先に行ってください。   
 
+<br>
+
 ### デバイス状態スキーマ
-デバイス状態の例として、以下のような内容が考えられます。
+デバイス状態の例として、以下のような内容が考えられます。  
 connection 以外の内容については、デバイスやアプリの要件により変更可能です。
 ```javascript
 {
@@ -80,6 +86,8 @@ $aws/things/{device_id}/shadow/update/delta
 state の値をデバイスに反映した後、publish を行い、サーバーに更新した状態を通知してください。
 state のとり得る値は、[デバイス状態スキーマ](#デバイス状態スキーマ)から connection を除いたものとなります。
 
+<br>
+
 ### publish (現在の状態を通知)
 以下のトピックを publish することで、現在の状態をサーバーに通知します。
 ```
@@ -87,8 +95,7 @@ $aws/things/{device_id}/shadow/update
 ```
 
 送信するメッセージは[デバイス状態スキーマ](#デバイス状態スキーマ)の内容となります。(整形不要)
-```
-javascript
+```javascript
 {
   "state":{
     "connection": "active",
@@ -102,7 +109,11 @@ javascript
 以下のタイミングで送信を行ってください。
 * デバイス起動時
 * 状態変更リクエスト受信時
-* 一分ごとなど定期的な間隔で送信 (スマートフォンアプリからデバイスの電源が入っていることを確認するために使用します。間隔は別途相談。)
+* 一分ごとなど定期的な間隔で送信
+
+定期的な送信は、スマートフォンアプリからデバイスの電源が入っていることを確認するために使用されます。  
+一定間隔以上更新がなされていない場合は、サーバーは電源が入っていないとみなし、スマートフォンアプリに connection inactive を返却します。  
+間隔は要件により別途相談。
 
 <br>
 
@@ -110,7 +121,7 @@ javascript
 
 ### 通信について
 上記、デバイスとバックエンドの接続は、AWS IoT を用いて実現しています。  
-そのため、必要に応じ、デバイス側で [AWS IoT SDK](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/iot-sdks.html) などのAWSが提供するツールを使用することが可能です。
+必要に応じ、デバイス側で [AWS IoT SDK](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/iot-sdks.html) などのAWSが提供するツールを使用することが可能です。
 
 ### MQTTトピックについて
 上記、MQTTトピックは [デバイスシャドウのMQTTトピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-delta-pub-sub-topic) に基づいています。  
