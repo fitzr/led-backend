@@ -3,9 +3,9 @@
   info: 
     title: "LED スマートフォンアプリ API リファレンス"
     version: "v0.1"
-    description: "以下のAPIを用い、スマートフォンからLEDデバイスの状態を取得および更新することが可能です。<br>
-                  * **LEDの状態を取得する GET API**
-                  * **LEDへ状態の更新をリクエストする PUT API**
+    description: "以下のAPIを用い、スマートフォンからLEDデバイスの状態を取得および更新することが可能です。<br><br>
+                  **・LEDの状態を取得する GET**<br>
+                  **・LEDへ状態の更新をリクエストする PUT**<br><br>
                   ベースURL及びAPI KEYは別途ご連絡します。"
   tags:
     - name: headers
