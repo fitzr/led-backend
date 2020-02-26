@@ -1,7 +1,7 @@
 ---
   openapi: "3.0.1"
   info: 
-    title: "LED API リファレンス"
+    title: "LED スマートフォンアプリ API リファレンス"
     version: "v0.1"
     description: "以下のAPIを用い、スマートフォンからLEDデバイスの状態を取得および更新することが可能です。<br>
                   <h4>* LEDの状態を取得する GET API</h4>

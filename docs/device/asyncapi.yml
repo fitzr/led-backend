@@ -1,0 +1,195 @@
+asyncapi: 2.0.0
+info:
+  title: LED デバイス API リファレンス
+  version: '0.1.0'
+  description: |
+    ## **概要**
+    以下のMQTTを使用した通信により、LEDデバイスとサーバーの連携を実現します。
+    * スマートフォンからの状態変更リクエストを受け付けるための subscribe
+    * LEDデバイスの現在の状態をサーバーに通知するための publish
+
+    ## **証明書の発行**
+    以下のデバイスIDおよび、デバイスIDに紐づく証明書をデバイスごとに発行します。  
+    デバイスは、あらかじめこれらを組込んだ状態である必要があります。  
+    スマートフォンアプリは、操作時にこのデバイスIDを知っている必要があります。
+    * device_id デバイスID
+    * ca.crt 認証局証明書 (全デバイス共通)
+    * device.crt デバイス証明書
+    * device.key デバイス秘密鍵
+    
+    ## **サーバーへのデバイス登録**
+    デバイスは初回通信時にサーバーに自動登録されます。  
+    ただし、初回に publish を実行すると、登録処理が間に合わず発行が行われない可能性があります。   
+    初回は、connect または、subscribe を先に行ってください。
+    
+    ## **その他**
+    #### **通信について**
+    デバイスとバックエンドの接続は、AWS IoT を用いて実現しています。  
+    必要に応じ、デバイス側で [AWS IoT SDK](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/iot-sdks.html) などの     AWSが提供するツールを使用することが可能です。
+
+    #### **MQTTトピックについて**
+    上記、MQTTトピックは [デバイスシャドウのMQTTトピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-delta-pub-sub-topic) に基づいています。  
+    デバイスからは、[delta トピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-delta-pub-sub-topic) によるリクエスト受付および [update トピック](https://docs.aws.amazon.com/ja_jp/iot/latest/developerguide/device-shadow-mqtt.html#update-pub-sub-topic)による状態通知を行う形となります。
+
+
+servers:
+  development:
+    url: xxxxxxxx-ats.iot.ap-northeast-1.amazonaws.com
+    protocol: mqtt
+    description: |
+      エンドポイントURLは、別途ご連絡します。  
+      **MQTT接続時、clientId にデバイスIDを指定してください。**
+    variables:
+      port:
+        description: 8883ポートを使用します。
+        default: '8883'
+    bindings:
+      mqtt:
+        clientId: デバイスID
+    security:
+      - x509: []
+
+defaultContentType: application/json
+
+channels:
+  $aws/things/{device_id}/shadow/update/delta:
+    parameters:
+      device_id:
+        description: デバイスID
+        schema:
+          type: string
+    subscribe:
+      summary: 状態変更リクエスト受付
+      description: |
+        このトピックを subscribe することで、状態変更リクエストを受信します。  
+        state の値をデバイスに反映した後、更新した状態を publish してください。 
+
+      message:
+        payload:
+          $ref: '#/components/schemas/UpdateLEDStateRequest'
+        
+  $aws/things/{device_id}/shadow/update:
+    parameters:
+      device_id:
+        description: デバイスID
+        schema:
+          type: string
+    publish:
+      summary: 現在の状態を通知
+      description: |
+        このトピックを publish することで、現在の状態をサーバーに通知します。  
+        以下のタイミングで送信を行ってください。
+        * デバイス起動時
+        * 状態変更リクエスト受信時
+        * 一分ごとなど定期的な間隔で送信  
+        定期的な送信は、スマートフォンからデバイスの電源状態を確認するために使用されます。  
+        一定間隔以上更新がなされていない場合は、サーバーは電源が入っていないとみなします。  
+        その場合、サーバーはスマートフォンアプリに connection inactive を返却します。  
+        送信間隔は要件により別途相談。
+      message:
+        payload:
+          $ref: '#/components/schemas/LEDState'
+          
+components:
+  schemas: 
+    LEDState:
+      title: LED状態
+      description: "LED状態の例、connection 以外の状態については、アプリやデバイスの要件により変更可能です"
+      type: object
+      additionalProperties: false
+      required:
+        - state
+      properties:
+        state:
+          type: object
+          additionalProperties: false
+          required:
+            - connection
+            - power
+            - brightness
+            - color
+          properties: 
+            connection:
+              pattern: ^(active|inactive)$
+              type: string
+              description: "デバイスに電源が入ってネットワークに接続しているかどうか"
+              examples:
+                - active
+                - inactive
+            power: 
+              pattern: ^(on|off)$
+              type: string
+              description: ライトの点灯状態
+              examples:
+                - on
+                - off
+            brightness: 
+              maximum: 100
+              minimum: 0
+              type: number
+              description: ライトの明るさ
+              examples:
+                - 50
+                - 80
+                - 100
+            color: 
+              maxLength: 30
+              minLength: 1
+              type: string
+              description: ライトの色
+              examples:
+                - white
+                - red
+    UpdateLEDStateRequest:
+      title: LED状態更新リクエスト
+      description: "LED状態の例、アプリやデバイスの要件により変更可能です"
+      type: object
+      properties:
+        version:
+          type: number
+          examples:
+            - 1234
+        timestamp:
+          type: number
+          examples:
+            - 1582694282
+        state:
+          type: object
+          properties:
+            power: 
+              pattern: ^(on|off)$
+              type: string
+              description: ライトの点灯状態
+              examples:
+                - on
+                - off
+            brightness: 
+              maximum: 100
+              minimum: 0
+              type: number
+              description: ライトの明るさ
+              examples:
+                - 50
+                - 80
+                - 100
+            color:
+              maxLength: 30
+              minLength: 1
+              type: string
+              description: ライトの色
+              examples:
+                - white
+                - red
+        metadata:
+          type: object
+          examples:
+            - color:
+                timestamp: 1582694282
+  securitySchemes:
+    x509:
+      type: X509
+      description: |
+        以下の証明書を使用してください。
+        * ca.crt
+        * device.crt
+        * device.key
