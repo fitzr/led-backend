@@ -1,6 +1,6 @@
 import { IotData, Iot } from 'aws-sdk'
 
-export interface UpdateStateRequest {
+export type UpdateStateRequest = {
   thingName: string
   state: object
 }

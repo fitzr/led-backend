@@ -1,6 +1,6 @@
 import { IotData } from 'aws-sdk'
 
-export interface GetStateRequest {
+export type GetStateRequest = {
   thingName: string
 }
 
@@ -47,7 +47,7 @@ class GetState {
   }
 
   static getCurrentTime(): number {
-    return (Date.now() / 1000) | 0
+    return Math.floor(Date.now() / 1000)
   }
 }
 

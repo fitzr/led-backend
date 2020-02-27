@@ -1,7 +1,7 @@
 import { IotData } from 'aws-sdk'
 import { GetStateRequest } from '../../src/lambda/get-state'
 
-const getCurrentTimeStamp = (): number => (Date.now() / 1000) | 0
+const getCurrentTimeStamp = (): number => Math.floor(Date.now() / 1000)
 
 describe('GetState', () => {
   const mockGetThingShadow = jest.fn()
